@@ -1,0 +1,59 @@
+@startuml
+
+skinparam style strictuml
+autonumber
+
+actor Consumer as user
+participant Booking as book
+participant CPMShandler as cpms
+
+activate user
+user -> book : get view
+activate book
+book --> user : view
+deactivate book
+
+user -> book : get booking info
+activate book
+book -> cpms : get booking info
+activate cpms
+cpms --> book : booking
+deactivate cpms
+book --> user : information
+deactivate book
+
+alt delete booking
+    user -> book : delete booking
+    activate book
+    book -> cpms : delete booking
+    activate cpms
+    cpms --> book : ack
+    deactivate cpms
+    book --> user : 200 OK and notification
+    deactivate book
+else edit booking
+    alt user has more than one vehicle
+        user -> book : selected vehicle
+        activate book
+    else user has only one vehicle
+        user -> book : vehicle
+    end
+    book -> cpms : get availabilities
+    activate cpms
+    cpms --> book : availabilities
+    deactivate cpms
+    book --> user : availabilities
+    deactivate book
+
+    user -> book : old booking, slot and vehicle
+    activate book
+    book -> cpms : update data
+    activate cpms
+    cpms --> book : ack
+    deactivate cpms
+    book --> user : 200 OK and notification
+    deactivate book
+    deactivate user
+end
+
+@enduml

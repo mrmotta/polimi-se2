@@ -1,0 +1,79 @@
+@startuml login
+
+skinparam style strictuml
+autonumber
+
+actor "CPMS user" as cu
+participant "Web Server" as web
+participant User as user
+participant DatabaseHandler as db
+participant "DSO handler" as DSO
+
+activate cu
+cu -> web : get login view
+activate web
+web --> cu : view
+deactivate web
+
+cu -> web : send username and password
+activate web
+web -> user : login (username, password)
+activate user
+user -> db : getCPMSuserID (username)
+activate db
+db --> user : userId
+deactivate db
+user -> db : getPassword (CPMSuserID)
+activate db
+db --> user : saltedPassword
+deactivate db
+user -> db : getSalt (CPMSuserID)
+activate db
+db --> user : salt
+deactivate db
+user --> user : checkPassword(password, saltedPassword, salt)
+
+user --> user : createToken ()
+user --> web : token, CPMSuserID
+deactivate user
+
+web --> cu : token, home view
+web -> user : getStations (CPMSuserID) 
+activate user
+
+user -> db : getStations (CPMSuserID)
+activate db
+db --> user : Stations
+deactivate db
+user --> web : Stations
+deactivate user
+web -->> cu : Stations
+
+web -> user : getDSOs (CPMSuserID)
+activate user
+user -> db : getDSOs (CPMSuserID)
+activate db
+db --> user : DSOs
+deactivate db
+user --> web : DSOs
+deactivate user
+
+loop for dsoID in DSOs
+    activate web
+    web -> user : getDSOdata (CPMSuserID, dsoID)
+    activate user
+    user -> db : checkDSO (CPMSuserID, dsoID)
+    activate db
+    db --> user : ack
+    deactivate db
+    user -> DSO : getDSOdata (CPMSuserID, dsoID)
+    activate DSO
+    DSO --> user : data
+    deactivate DSO
+    user --> web : data
+    deactivate user
+    web -->> cu : DSO, DSO data
+    deactivate web
+end
+
+@enduml

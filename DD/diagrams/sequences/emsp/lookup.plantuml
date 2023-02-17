@@ -1,0 +1,120 @@
+@startuml
+
+skinparam style strictuml
+autonumber
+
+actor Consumer as consumer
+participant "Web server" as web
+participant User as user
+participant CPMShandler as cpms
+participant DatabaseHandler as db
+participant CPMSapi as api
+participant OpenStreetMap as osm
+
+activate consumer
+consumer -> web : get view
+activate web
+web --> consumer : view
+deactivate web
+
+alt look for favorites  
+    consumer -> web : get favorites
+    activate web
+    web -> user : getFavoriteStations (user)
+    activate user
+    user -> db : getFavoriteStations (user)
+    activate db
+    db --> user : stations
+    deactivate db
+    loop for each station
+        user -> cpms : getStationInfo (station)
+        activate cpms
+        cpms -> db : getStationInfo (station)
+        activate db
+        db --> cpms : result
+        deactivate db
+        opt stale information
+            cpms -> api : getStationInfo (station)
+            activate api
+            api --> cpms : information
+            deactivate api
+            cpms -> db : cacheStationInfo (information)
+            activate db
+            db --> cpms : ack
+            deactivate db
+        end
+        cpms --> user : stationInfo
+        deactivate cpms
+    end
+    user --> web : stations
+    deactivate user
+    web --> consumer : favorites
+    deactivate web
+else doesn't look for favorites
+    alt geolocalize
+        consumer -> osm : send location
+        activate osm
+        osm --> consumer : coordinates
+        deactivate osm
+    else search a location
+        consumer -> osm : search location
+        activate osm
+        osm --> consumer : coordinates
+        deactivate osm
+    end
+
+    par
+        consumer -> web : send coordinates and radius
+        activate web
+        web -> cpms : getStationsInRadius (coordinates, radius)
+        activate cpms
+        cpms -> db : getStationsInRadius (coordinates, radius)
+        activate db
+        db --> cpms : result
+        deactivate db
+        loop for every cpms in result
+            opt stale information
+                cpms -> api : getStationsInRadius (coordinates, radius)
+                activate api
+                api --> cpms : stations
+                deactivate api
+                cpms -> db : cacheStationInfo (stations)
+                activate db
+                db --> cpms : ack
+                deactivate db
+            end
+        end
+        loop for every station
+            opt stale information
+                cpms -> api : getStationInfo (station)
+                activate api
+                api --> cpms : information
+                deactivate api
+                cpms -> db : cacheStationInfo (information)
+                activate db
+                db --> cpms : ack
+                deactivate db
+            end
+        end
+        cpms --> web : stations
+        deactivate cpms
+        web --> consumer : list  stations
+        deactivate web
+    else
+        opt map view
+            consumer -> osm : send coordinates
+            activate osm
+            osm --> consumer : map
+            deactivate osm
+        end
+    end
+
+    opt list view and wants to sort
+        consumer -> consumer : sorting parameters
+        activate consumer
+        consumer --> consumer : sorted list
+        deactivate consumer
+    end
+end
+
+@enduml

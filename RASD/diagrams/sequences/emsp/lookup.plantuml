@@ -1,0 +1,78 @@
+@startuml
+
+skinparam style strictuml
+autonumber
+
+actor Consumer as user
+participant Lookup as lookup
+participant CPMShandler as cpms
+participant OpenStreetMap as osm
+
+activate user
+user -> lookup : get view
+activate lookup
+lookup --> user : view
+deactivate lookup
+
+alt looks for favorites
+    user -> lookup : get favorites
+    activate lookup
+    lookup --> user : favorites
+    deactivate lookup
+else doesn't look for favorites
+    alt geolocalize
+        user -> osm : activate geolocalization
+        activate osm
+        osm --> user : location
+        deactivate osm
+    else search a location
+        user -> osm : search location
+        activate osm
+        osm --> user : location
+        deactivate osm
+    end
+
+    par
+        user -> lookup : send location
+        activate lookup
+        lookup -> cpms : get stations
+        activate cpms
+        cpms --> lookup : stations
+        deactivate cpms
+        lookup --> user : list of stations
+        deactivate lookup
+    else
+        opt map view
+            user -> osm : send location
+            activate osm
+            osm --> user : map
+            deactivate osm
+        end
+    end
+
+    opt list view and wants to sort
+        user -> user : sorting parameters
+        activate user
+        user --> user : sorted list
+        deactivate user
+    end
+end
+
+user -> lookup : get charging station info
+activate lookup
+lookup -> cpms : get charging station info
+activate cpms
+cpms --> lookup : information
+deactivate cpms
+lookup --> user : information
+deactivate lookup
+
+opt mark/unmark as favorite
+    user -> lookup : mark/unmark station
+    activate lookup
+    lookup --> user : 200 OK
+    deactivate lookup
+    deactivate user
+end
+
+@enduml

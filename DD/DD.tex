@@ -1,0 +1,112 @@
+% !TeX encoding = UTF-8
+% !TeX spellcheck = en_US
+
+\newcommand{\doublequotes}[1]{``#1''}
+\newcommand{\reference}[1]{\ref{#1} \nameref{#1} (page \pageref{#1})}
+\newcommand{\introreference}[1]{Chapter \ref{#1}: \nameref{#1} (page \pageref{#1})}
+\newcommand{\figureref}[1]{Figure \ref{#1}}
+
+\documentclass[a4paper,twoside]{report}
+
+\pdfminorversion=7
+\pdfcompresslevel=9
+\pdfobjcompresslevel=2
+
+\usepackage[hidelinks]{hyperref}
+\usepackage[margin=60pt]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{array}
+\usepackage{colortbl}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+\arrayrulecolor{lightgray}
+\def\arraystretch{1.2}
+
+\setlength{\parindent}{0pt}
+\setlength{\fboxsep}{0pt}
+\setlength{\fboxrule}{0.25pt}
+
+\hypersetup{
+    pdftitle={eMall - e-Mobility for All (DD)},
+    pdfauthor={Riccardo Motta and Pierluigi Negro}
+}
+
+\newcommand\nbvspace[1][3]{\vspace*{\stretch{#1}}}
+
+\newcounter{goals}
+\newcounter{requirements}
+
+\setcounter{goals}{0}
+\setcounter{requirements}{0}
+
+\newcommand{\showG}[1]{\refstepcounter{goals}\label{#1}G\thegoals}
+\newcommand{\showR}[1]{\refstepcounter{requirements}\label{#1}R\therequirements}
+
+\newcommand{\refG}[1]{G\ref{#1}}
+\newcommand{\refR}[1]{R\ref{#1}}
+
+\raggedbottom
+
+\renewcommand{\headrulewidth}{0pt}
+
+\fancypagestyle{plain}{
+    \fancyhead{}
+    \fancyfoot{}
+    \fancyfoot[LE,RO]{\thepage}
+}
+
+\pagestyle{fancy}
+
+\fancyhead{}
+\fancyfoot{}
+
+\renewcommand{\chaptermark}[1]{\markboth{#1}{#1}}
+
+\fancyhead[RO,LE]{\textcolor{gray}{\if\thechapter0{\contentsname}\else\chaptername\ \thechapter:\ \leftmark\fi}}
+\fancyfoot[LE,RO]{\thepage}
+
+\begin{document}
+
+    \begin{titlepage}
+
+        \begin{center}
+
+            \nbvspace[1]
+
+            \includegraphics[width=0.3\columnwidth]{./images/polimi}
+
+            \nbvspace[2]
+
+            {\huge \textbf{\textsc{eMall - e-Mobility for All}}} \\
+            [1.5em]
+            {\Large \textbf{D}esign \textbf{D}ocument}
+
+            \nbvspace[6]
+
+            \Large \textbf{Riccardo Motta \\ Pierluigi Negro}
+
+            \nbvspace[2]
+
+            \today \\ [0.5em]
+            Version 1.1
+
+            \nbvspace[1]
+
+        \end{center}
+
+    \end{titlepage}
+
+    \tableofcontents{}
+
+    \include{chapters/1-intro}
+    \include{chapters/2-arch.tex}
+    \include{chapters/3-ui.tex}
+    \include{chapters/4-trace.tex}
+    \include{chapters/5-iitp.tex}
+    \include{chapters/6-end.tex}
+
+\end{document}

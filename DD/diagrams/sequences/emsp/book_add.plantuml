@@ -1,0 +1,104 @@
+@startuml
+
+skinparam style strictuml
+autonumber
+
+actor Consumer as consumer
+participant CPMSapi as api
+participant "Web server" as web
+participant VehicleHandler as vehicle
+participant User as user
+participant CPMShandler as cpms
+participant DeviceHandler as device
+participant BookingHandler as booking
+participant EmailHandler as email
+participant DatabaseHandler as db
+
+activate consumer
+consumer -> web : get view
+activate web
+web --> consumer : view
+deactivate web
+
+consumer -> web : station and vehicle
+activate web
+web -> cpms : getAvailabilities (station, vehicle)
+activate cpms
+cpms -> vehicle : getSocket (vehicle)
+activate vehicle
+vehicle -> db : getSocket (vehicle)
+activate db
+db --> vehicle : socket
+deactivate db
+vehicle --> cpms : socket
+deactivate vehicle
+cpms -> api : getAvailabilities (station, socket)
+activate api
+api --> cpms : availabilities
+deactivate api
+cpms --> web : availabilities
+deactivate cpms
+web --> consumer : availabilities
+deactivate web
+
+consumer -> web : station, slot and vehicle
+activate web
+web -> user : book (user, station, slot, vehicle)
+activate user
+user -> booking : book (user, station, slot, vehicle)
+activate booking
+booking -> vehicle : getSocket (vehicle)
+activate vehicle
+vehicle -> db : getSocket (vehicle)
+activate db
+db --> vehicle : socket
+deactivate db
+vehicle --> booking : socket
+deactivate vehicle
+booking -> vehicle : getCertificate (vehicle)
+activate vehicle
+vehicle -> db : getCertificate (vehicle)
+activate db
+db --> vehicle : certificate
+deactivate db
+vehicle --> booking : certificate
+deactivate vehicle
+booking -> cpms : book (user, station, slot, vehicle)
+activate cpms
+cpms -> api : book (station, slot, user, socket, certificate)
+activate api
+api --> cpms : details
+deactivate api
+cpms --> booking : details
+deactivate cpms
+booking --> user : details
+deactivate booking
+user --> web : details
+web --> consumer : details
+deactivate web
+deactivate consumer
+
+user -> db : getNotificationPreference (user)
+activate db
+db --> user : preference
+deactivate db
+alt in-app notification and any available device
+    loop for each device
+        user -> device : notifyBooking (user, details)
+        activate device
+        device -> web : notify (device, message)
+        activate web
+        web --> device : ack
+        deactivate web
+        device --> user : ack
+        deactivate device
+    end
+else email notification
+    user -> email : notifyBooking (email, details)
+    activate email
+    email --> user : ack
+    deactivate email
+    deactivate user
+end
+
+@enduml

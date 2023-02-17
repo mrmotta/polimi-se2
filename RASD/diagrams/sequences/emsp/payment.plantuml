@@ -1,0 +1,53 @@
+@startuml
+
+skinparam style strictuml
+autonumber
+
+actor Consumer as user
+participant Booking as booking
+participant CPMShandler as cpms
+participant PaymentHandler as payment
+
+activate user
+user -> booking : get view
+activate booking
+booking --> user : view
+deactivate booking
+
+user -> booking : get charge to pay
+activate booking
+booking -> cpms : get charge to pay
+activate cpms
+cpms --> booking : booking details
+deactivate cpms
+booking --> user : booking details
+deactivate booking
+
+user -> payment : get view
+activate payment
+payment --> user : view
+deactivate payment
+
+user -> payment : payment data
+activate payment
+payment -> payment : check data
+activate payment
+payment --> payment : ack
+deactivate payment
+payment -> payment : do the transaction
+activate payment
+payment --> payment : ack
+deactivate payment
+payment --> user : 200 OK and notification
+deactivate user
+payment -> booking : payment completed
+activate booking
+booking --> payment : ack
+deactivate payment
+booking -> cpms : payment done
+activate cpms
+cpms --> booking : ack
+deactivate cpms
+deactivate booking
+
+@enduml

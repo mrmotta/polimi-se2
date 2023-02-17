@@ -1,0 +1,39 @@
+@startuml
+
+skinparam style strictuml
+autonumber
+
+actor Consumer as consumer
+participant "Web server" as web
+participant User as user
+participant DatabaseHandler as db
+
+activate consumer
+consumer -> web : get view
+activate web
+web --> consumer : view
+deactivate web
+
+consumer -> web : send username and password
+activate web
+web -> user : authenticate (username, password)
+activate user
+user -> db : checkUser (username, password)
+activate db
+db --> user : userId
+deactivate db
+user -> db : getVehicles (userId)
+activate db
+db --> user : vehicles
+deactivate db
+user -> user : createToken (userId, vehicles)
+activate user
+user --> user : JWT
+deactivate user
+user --> web : JWT
+deactivate user
+web --> consumer : 200 OK, JWT
+deactivate web
+deactivate consumer
+
+@enduml

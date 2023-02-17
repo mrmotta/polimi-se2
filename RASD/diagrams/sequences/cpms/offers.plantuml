@@ -1,0 +1,36 @@
+@startuml offers
+
+skinparam style strictuml
+autonumber
+
+actor User as u
+participant ViewController as sys
+database DataBase as db
+
+activate u
+u -> sys : get offer view
+activate sys
+
+sys -> db : get existing offers
+activate db
+db --> sys : offers
+deactivate db
+
+sys --> u: offer view
+deactivate sys
+
+u -> sys : create new offer
+activate sys
+
+sys -> db : create new offer
+activate db
+db --> sys : ack
+deactivate db
+
+sys --> u: ack
+deactivate sys
+
+
+
+
+@enduml

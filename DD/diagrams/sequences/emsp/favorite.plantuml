@@ -1,0 +1,33 @@
+@startuml
+
+skinparam style strictuml
+autonumber
+
+actor Consumer as consumer
+participant "Web server" as web
+participant User as user
+participant DatabaseHandler as db
+
+activate consumer
+consumer -> web : get view
+activate web
+web --> consumer : view
+deactivate web
+
+opt mark/unmark as favorite
+    consumer -> web : mark/unmark station
+    activate web
+    web -> user : toggleFavorite (user, station)
+    activate user
+    user -> db : toggleFavorite (user, station)
+    activate db
+    db --> user : ack
+    deactivate db
+    user --> web : ack
+    deactivate user
+    web --> consumer : 200 OK
+    deactivate web
+    deactivate consumer
+end
+
+@enduml

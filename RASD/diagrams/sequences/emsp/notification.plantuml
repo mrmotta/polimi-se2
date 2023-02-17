@@ -1,0 +1,32 @@
+@startuml
+
+skinparam style strictuml
+autonumber
+
+actor Consumer as user
+participant NotificationService as notification
+database DataBase as db
+participant CPMShandler as cpms
+
+activate cpms
+alt assigned slot
+    cpms -> notification : assigned slot
+    activate notification
+else end of charge
+    cpms -> notification : end of charge
+else payment result
+    cpms -> notification : payment result
+end
+notification --> cpms : ack
+deactivate cpms
+notification -> db : notification preference
+activate db
+db --> notification : preference
+deactivate db
+notification -> user : send message
+activate user
+user --> notification : ack
+deactivate user
+deactivate notification
+
+@enduml

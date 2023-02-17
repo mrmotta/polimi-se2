@@ -1,0 +1,238 @@
+\chapter{Introduction} \label{introduction}
+
+Nowadays, electric vehicles are becoming very popular. The need to reduce pollution to save our planet is compelling, and anything we can do to reduce the effects of climate change is moving towards the use of clean energy sources, and everyone can do their part.\medskip
+
+Many people are changing their cars to electric ones, and in many cities charging stations are being installed for these vehicles. The main aim of the \textsc{eMall} project is to limit the carbon footprint of our mobility by making easy and efficient charging electric cars, focusing on planning the charge.\medskip
+
+The \textsc{eMall} project also focuses on the energy needed to accomplish charging cars, as it's important to manage it most efficiently. This is done to reduce the cost of the primary resources and to make the service even more competitive and cheap. The \textsc{eMall} project tries to simplify also this aspect of the charge chain.
+
+\section{Purpose}
+
+The purpose of this document is to provide a general, complete, high-level view of the eMSP and CPMS systems, and of their interactions.\medskip
+
+This document comprehends:
+\begin{itemize}
+    \item The architectural design of the two systems, comprehending various views over components and interfaces of the systems, and connections between them and between external systems. All these components are also viewed dynamically through the use of use-case sequence diagrams.
+    \item A rough idea of what the users will experience in the means of user interfaces.
+    \item The mapping between the systems' components and the requirements identified in the \textit{Requirements Analysis and Specification Document}.
+    \item A plan on how the two systems should be implemented, integrated, and tested.
+\end{itemize}
+
+\section{Scope}
+
+\paragraph{eMSP | Simplify the charging process of electric vehicles} Charging an electric vehicle can be a challenging task to do. Nowadays, it's not so easy to find charging stations where to plug the vehicle. So, also looking at the future where this kind of station will be more present in the territory, it's fundamental to have a system like this one to carefully plan the charge of the vehicle, in order to minimize the time spent on this task, so that it doesn't have any impact on drivers' lives. Thanks to this system it's possible to search for a charging station nearby, check prices and sales, and, of course, book a charging slot for the vehicle.
+
+\paragraph{CPMS | Optimize the energy usage and supply} To be competitive, it's also important to minimize the costs of the whole infrastructure, paying careful attention to the price of the electricity and to the mix of primary sources from which it was derived. On the market, there are possibly many DSOs, each one with different supply capabilities, prices, and energy mixes. Choosing from which source to buy the energy is crucial, especially if the CPO can store it in batteries at the charging station.
+
+\pagebreak
+
+\section{Goals}
+
+More formally, here are formalized all the goals that the system should archive.
+
+\subsection{eMSP goals}
+
+This first part focuses on the goals related to the eMPS.
+
+\begin{center}
+    \begin{tabular}{ >{\arraybackslash}m{0.1\columnwidth} | >{\arraybackslash}m{0.84\columnwidth} }
+        \textbf{\showG{g:e:lookup}} & \textbf{Allow the user to see all the charging stations} \\
+        \hline
+        \multicolumn{2}{p{0.966\columnwidth}}{
+            The user can see and look for all the available charging stations with all the important information, like the cost of the charge and any special offers.
+        } \\
+    \end{tabular}
+\end{center}
+\begin{center}
+    \begin{tabular}{ >{\arraybackslash}m{0.1\columnwidth} | >{\arraybackslash}m{0.84\columnwidth} }
+        \textbf{\showG{g:e:book}} & \textbf{Allow the user to book a charge} \\
+        \hline
+        \multicolumn{2}{p{0.966\columnwidth}}{
+            Every user can reserve a charge if any slot is available. The user can select a charging station, the starting time, and the duration of the charge. Moreover, s/he selects the type of socket to use.
+        } \\
+    \end{tabular}
+\end{center}
+\begin{center}
+    \begin{tabular}{ >{\arraybackslash}m{0.1\columnwidth} | >{\arraybackslash}m{0.84\columnwidth} }
+        \textbf{\showG{g:e:start}} & \textbf{Allow the user to start the charge} \\
+        \hline
+        \multicolumn{2}{p{0.966\columnwidth}}{
+            Every user who has booked can start the charging process during the booked period. This will be done automatically by recognizing the connected vehicle once the socket is plugged in.
+        } \\
+    \end{tabular}
+\end{center}
+\begin{center}
+    \begin{tabular}{ >{\arraybackslash}m{0.1\columnwidth} | >{\arraybackslash}m{0.84\columnwidth} }
+        \textbf{\showG{g:e:notify}} & \textbf{Let the system notify the user when the charge is finished} \\
+        \hline
+        \multicolumn{2}{p{0.966\columnwidth}}{
+            End users are informed every time one of their vehicles charging in one of the charging stations ends the recharging process by sending them a notification.
+        } \\
+    \end{tabular}
+\end{center}
+\begin{center}
+    \begin{tabular}{ >{\arraybackslash}m{0.1\columnwidth} | >{\arraybackslash}m{0.84\columnwidth} }
+        \textbf{\showG{g:e:pay}} & \textbf{Allow the user to pay for the service} \\
+        \hline
+        \multicolumn{2}{p{0.966\columnwidth}}{
+            Every user can pay for the obtained charging process.
+        } \\
+    \end{tabular}
+\end{center}
+
+\subsection{CPMS goals}
+
+This second part, instead, focuses on the goals related to the CPMS.
+
+\begin{center}
+    \begin{tabular}{ >{\arraybackslash}m{0.1\columnwidth} | >{\arraybackslash}m{0.84\columnwidth} }
+        \textbf{\showG{g:c:info}} & \textbf{Let the system have information about charging stations} \\
+        \hline
+        \multicolumn{2}{p{0.966\columnwidth}}{
+            Know the position and the characteristics of all the various charging stations, like sockets, batteries, available energy, and occupation.
+        } \\
+    \end{tabular}
+\end{center}
+\begin{center}
+    \begin{tabular}{ >{\arraybackslash}m{0.1\columnwidth} | >{\arraybackslash}m{0.84\columnwidth} }
+        \textbf{\showG{g:c:charge}} & \textbf{Allow for cars to charge} \\
+        \hline
+        \multicolumn{2}{p{0.966\columnwidth}}{
+            Start the charge of a vehicle, monitoring the process.
+        } \\
+    \end{tabular}
+\end{center}
+\begin{center}
+    \begin{tabular}{ >{\arraybackslash}m{0.1\columnwidth} | >{\arraybackslash}m{0.84\columnwidth} }
+        \textbf{\showG{g:c:dso}} & \textbf{Fetch information from DSO and decide which DSO to use} \\
+        \hline
+        \multicolumn{2}{p{0.966\columnwidth}}{
+            Acquire the price of the electricity from the providers and decide from which to buy, if more options are available. 
+        } \\
+    \end{tabular}
+\end{center}
+\begin{center}
+    \begin{tabular}{ >{\arraybackslash}m{0.1\columnwidth} | >{\arraybackslash}m{0.84\columnwidth} }
+        \textbf{\showG{g:c:mix}} & \textbf{Define energy mix} \\
+        \hline
+        \multicolumn{2}{p{0.966\columnwidth}}{
+            Decide the mix of electricity to provide to the sockets, deciding whether to buy energy, use the one stored in batteries or buy energy to store in batteries.
+        } \\
+    \end{tabular}
+\end{center}
+\begin{center}
+    \begin{tabular}{ >{\arraybackslash}m{0.1\columnwidth} | >{\arraybackslash}m{0.84\columnwidth} }
+        \textbf{\showG{g:c:offers}} & \textbf{Manage special offers} \\
+        \hline
+        \multicolumn{2}{p{0.966\columnwidth}}{
+            Create new special offers on prices for charging.
+        } \\
+    \end{tabular}
+\end{center}
+
+\section{Definitions, acronyms and abbreviations}
+
+\subsection{Definitions}
+
+\begin{center}
+    \begin{tabular}{ | >{\centering\arraybackslash}m{0.15\columnwidth} | >{\arraybackslash}m{0.79\columnwidth} | }
+        \hline
+        \textbf{Word} & \multicolumn{1}{c|}{\textbf{Definition}} \\
+        \hline
+        \hline
+        eRoaming & The \textit{eRoaming} is an external service that the system can query in order to obtain information about the various connected eMPSs and CPMSs. \\
+        \hline
+        JavaScript & It's a programming language often used client-side in the World Wide Web for making web pages interactive. \\
+        \hline
+        QUIC & It's a recent transport layer for the Internet Protocol aimed to replace TCP. \\
+        \hline
+    \end{tabular}
+\end{center}
+
+\subsection{Acronyms}
+
+\begin{center}
+    \begin{tabular}{ | >{\centering\arraybackslash}m{0.15\columnwidth} | >{\arraybackslash}m{0.79\columnwidth} | }
+        \hline
+        \textbf{Acronym} & \multicolumn{1}{c|}{\textbf{Description}} \\
+        \hline
+        \hline
+        API & \textit{Application Programming Interface}: is a set of instructions and interfaces that is standardized in order to facilitate the communication between different pieces of software. \\
+        \hline
+        CPMS & \textit{Charge Point Management System}: the CPOs management system that supports the process of charging vehicles and acquiring the energy from the various DSOs. \\
+        \hline
+        CPO & \textit{Charging Point Operator}: the name of the operators managing the charging points and providing the actual charging service. \\
+        \hline
+        CSS & \textit{Cascading Style Sheets}: it's a style sheet language typically used together with HTML web pages which contains the stylistic information of the page. \\
+        \hline
+        DBMS & \textit{DataBase Management System}: it's the system that sits between the physical data structures on disk and the user, allowing to create, read, update and delete data. \\
+        \hline
+        DSO & \textit{Distribution System Operator}: the name of the operators that provide the actual energy used during the charging process. \\
+        \hline
+        eMSP & \textit{e-Mobility Service Provider}: the name of the providers of the service to the end users, acting as intermediaries between the uses and the backing CPOs. \\
+        \hline
+        GDPR & \textit{General Data Protection Regulation}: it's \doublequotes{the toughest privacy and security law in the world} (according to the \href{https://gdpr.eu}{official website}) in force in the European Union. \\
+        \hline
+        HTML & \textit{HyperText Markup Language}: it's the standard markup language used for documents designed to be displayed in a web browser. \\
+        \hline
+        HTTP & \textit{HyperText Transfer Protocol}: it's one of the application layer protocols used in the Internet Protocol suite for distributing content and information through the network. Moreover, HTTPS represents the Secure version of HTTP (with data encryption), while HTTP3 stands for the third main version of the standard. \\
+        \hline
+        IP & \textit{Internet Protocol}: it's the main network layer protocol of the Internet. \\
+        \hline
+        JSON & \textit{JavaScript Object Notation}: it's an open format for exchanging data in a human-readable way, with pairs of key-value attributes and arrays. \\
+        \hline
+        JWT & \textit{JSON Web Token}: it' a standardized method for securely representing claims between two parties. \\
+        \hline
+        OS & \textit{Operating System}: it's the piece of software (of which the kernel is part) that manages hardware and software resources, providing utilities to developers. \\
+        \hline
+        REST & \textit{REpresentational State Transfer}: it's a software architectural style and describes an interface for the communication between remote entities (this is also a nice way to describe the web). \\
+        \hline
+        SEO & \textit{Search Engine Optimization}: it's the process of improving the quality and quantity of website traffic, from search engines to web pages (in this specific case). \\
+        \hline
+        SMTP & \textit{Simple Mail Transfer Protocol}: it's the main protocol for transmitting emails. \\
+        \hline
+        SQL & \textit{Structured Query Language}: it's a domain-specific languages used for managing data stored in relational database management systems. \\
+        \hline
+        TCP & \textit{Transmission Control Protocol}: it's one of the main transportation layer protocols of the Internet Protocol suite, which provides a reliable (under normal conditions) delivery of information on the Internet. \\
+        \hline
+    \end{tabular}
+\end{center}
+
+\subsection{Abbreviations}
+
+\begin{center}
+    \begin{tabular}{ | >{\centering\arraybackslash}m{0.15\columnwidth} | >{\arraybackslash}m{0.79\columnwidth} | }
+        \hline
+        \textbf{Abbreviation} & \multicolumn{1}{c|}{\textbf{Description}} \\
+        \hline
+        \hline
+        \textsc{eMall} & \textsc{eMall - e-Mobility for All}. \\
+        \hline
+    \end{tabular}
+\end{center}
+
+\section{Revision history}
+
+\paragraph{Version 1.0} released on January 8, 2023: original release.
+\paragraph{Version 1.1} released on \today: added eRoaming handshake functions and few utility functions to the eMSP.
+
+\section{Reference documents}
+
+\begin{enumerate}
+    \item \textbf{M. Camilli, E. Di Nitto, M. G. Rossi}; \textit{eMall - e-Mobility for All project} (2022)
+    \item \textbf{R. Motta, P. Negro}; \textit{eMall - e-Mobility for All (Requirements Analysis and Specification Document)} (2022)
+\end{enumerate}
+
+\section{Document structure}
+
+\paragraph{\introreference{introduction}} This first part provides a general introduction to the project and describes the main purpose and goals it tries to archive, defining the scope of the project and pointing out some definitions, acronyms, and abbreviations used in this document. Moreover, there are all the revisions of the document with all the references used for writing it.
+
+\paragraph{\introreference{architecture}} This second part focuses on the real architecture of the project, providing a general overview of the systems, followed by a precise description of all the designed components and their interactions, pointing also out their interfaces.
+
+\paragraph{\introreference{ui}} This third part provides some mockups of the designed user interface for the systems and their relations.
+
+\paragraph{\introreference{traceability}} This fourth part, instead, focuses on the requirements of the project and their actual implementation into the system. For each requirement, the components that implement it are pointed out.
+
+\paragraph{\introreference{iitp}} This fifth part provides an overview of the flow of implementation of the various components of the two systems, also providing a plan for integrating the various components and testing them all.
+
+\paragraph{\introreference{conclusions}} This last part contains the last notes about the project and concludes this document, pointing out the effort that each of the authors of this document spent in order to release it.

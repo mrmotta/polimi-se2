@@ -1,0 +1,64 @@
+@startuml energyMix
+
+skinparam style strictuml
+autonumber
+
+actor User as u
+participant ViewController as vc
+participant ChargingStation as cs
+participant ChargingColumn as cc
+participant SolarPanel as sp
+participant Battery as bat
+participant DSOHandler as dso
+database DataBase as db
+
+activate u
+u -> vc : get mix view
+activate vc
+
+vc -> db : get available sources
+activate db
+db --> vc: sources
+deactivate db 
+vc --> u : new view
+deactivate vc
+
+u -> vc : new energy mix
+activate vc
+
+vc -> cs : new energy mix
+activate cs
+par 
+    cs -> cc: new energy mix
+    activate cc
+    cc --> cs: ack
+    deactivate cc
+else 
+    cs -> sp: new energy mix
+    activate sp
+    sp --> cs: ack
+    deactivate sp
+else 
+    cs -> bat: new energy mix
+    activate bat
+    bat --> cs: ack
+    deactivate bat
+else 
+    cs -> dso: new energy mix
+    activate dso
+    dso --> cs: ack
+    deactivate dso
+end
+
+cs --> vc : ack
+deactivate cs
+vc -> db : change energy mix
+activate db
+db --> vc : ack
+deactivate db 
+
+vc --> u : ack
+deactivate vc
+deactivate u
+
+@enduml

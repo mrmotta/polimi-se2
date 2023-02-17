@@ -1,0 +1,98 @@
+@startuml
+
+skinparam style strictuml
+autonumber
+
+actor Consumer as consumer
+participant EmailHandler as email
+participant "Web server" as web
+participant CPMSapi as api
+participant DatabaseHandler as db
+participant User as user
+participant CPMShandler as cpms
+participant DeviceHandler as device
+participant VehicleHandler as vehicle
+participant BookingHandler as booking
+
+activate consumer
+consumer -> web : get view
+activate web
+web --> consumer : view
+deactivate web
+
+consumer -> web : get bookings
+activate web
+web -> user : getBookings (user)
+activate user
+user -> booking : getBookings (user)
+activate booking
+booking -> cpms : getFutureBookings (user)
+activate cpms
+loop for every cpms
+    cpms -> api : getFutureBookings (user)
+    activate api
+    api --> cpms : bookings
+    deactivate api
+end
+cpms --> booking : bookings
+deactivate cpms
+booking --> user : bookings
+deactivate booking
+user --> web : bookings
+deactivate user
+web --> consumer : bookings
+deactivate web
+
+consumer -> web : delete booking
+activate web
+web -> user : deleteBooking (user, booking)
+activate user
+user -> booking : delete (booking)
+activate booking
+booking -> cpms : deleteBooking (booking)
+activate cpms
+cpms -> api : deleteBooking (booking)
+activate api
+api --> cpms : ack
+deactivate api
+cpms --> booking : ack
+deactivate cpms
+booking --> user : ack
+deactivate booking
+user --> web : ack
+web --> consumer : 200 OK
+deactivate web
+deactivate consumer
+
+user -> db : getNotificationPreference (user)
+activate db
+db --> user : preference
+deactivate db
+alt in-app notification and any available device
+    loop for each device
+        alt deleted booking
+            user -> device : notifyBookingDeletion (user, details)
+            activate device
+        else updated booking
+            user -> device : notifyBookingUpdate (user, details)
+        end
+        device -> web : notify (device, message)
+        activate web
+        web --> device : ack
+        deactivate web
+        device --> user : ack
+        deactivate device
+    end
+else email notification
+    alt delete booking
+        user -> email : notifyBookingDeletion (email, details)
+        activate email
+    else updated booking
+        user -> email : notifyBookingUpdate (email, details)
+    end
+    email --> user : ack
+    deactivate email
+    deactivate user
+end
+
+@enduml

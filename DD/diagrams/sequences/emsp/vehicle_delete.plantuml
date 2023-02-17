@@ -1,0 +1,75 @@
+@startuml
+
+skinparam style strictuml
+autonumber
+
+actor Consumer as consumer
+participant DatabaseHandler as db
+participant "Web server" as web
+participant CPMShandler as cpms
+participant User as user
+participant VehicleHandler as vehicle
+participant BookingHandler as booking
+participant CPMSapi as api
+
+activate consumer
+consumer -> web : get view
+activate web
+web --> consumer : view
+deactivate web
+
+consumer -> web : get vehicle view
+activate web
+web --> consumer : view
+deactivate web
+consumer -> web : remove vehicle
+activate web
+web -> user : removeVehicle (user, vehicle)
+activate user
+user -> vehicle : removeVehicle (user, vehicle)
+activate vehicle
+vehicle -> db : removeUserVehicle (user, vehicle)
+activate db
+db --> vehicle : ack
+deactivate
+vehicle --> user : ack
+deactivate vehicle
+user -> booking : removeBooking (user, vehicle)
+activate booking
+loop for every cpms
+    booking -> cpms : getFutureBookings (user, vehicle)
+    activate cpms
+    cpms -> api : getFutureBookings (user)
+    activate api
+    api --> cpms : bookings
+    deactivate api
+    cpms -> cpms : filter (bookings, vehicle)
+    activate cpms
+    cpms --> cpms : bookings
+    deactivate cpms
+    cpms --> booking : bookings
+    deactivate cpms
+    loop for every booking
+        booking -> cpms : deleteBooking (booking)
+        activate cpms
+        cpms -> api : deleteBooking (booking)
+        activate api
+        api --> cpms : ack
+        deactivate api
+        cpms --> booking : ack
+        deactivate cpms
+    end
+end
+booking --> user : ack
+deactivate booking
+user -> user : createToken (user, vehicles)
+activate user
+user --> user : JWT
+deactivate user
+user --> web : JWT
+deactivate user
+web --> consumer : 200 OK, JWT
+deactivate web
+deactivate consumer
+
+@enduml

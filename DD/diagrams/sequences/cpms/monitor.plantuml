@@ -1,0 +1,70 @@
+@startuml monitor
+
+skinparam style strictuml
+autonumber
+
+actor "CPMS user" as cu
+participant DatabaseHandler as db
+participant "Web Server" as web
+participant User as user
+participant "DSOhandler" as DSO
+
+activate cu
+activate web
+cu -> web : get station view
+activate web
+web --> cu : view
+
+loop Until User exits view
+    web ->> user : getStationData (CPMSuserID, stationID)
+    activate user
+    user -> db : getStationData (CPMSuserID, stationID)
+    activate db
+    db --> db : checkStation (CPMSuserID, stationId)
+    db --> user : data
+    deactivate db
+    user -->> web: data
+    deactivate user
+    web -->> cu : data
+end
+cu -> web : exit
+deactivate web
+web --> cu : home view
+
+web -> user : getStations (CPMSuserID) 
+activate user
+
+user -> db : getStations (CPMSuserID)
+activate db
+db --> user : Stations
+deactivate db
+user --> web : Stations
+deactivate user
+web -->> cu : Stations
+
+web -> user : getDSOs (CPMSuserID)
+activate user
+user -> db : getDSOs (CPMSuserID)
+activate db
+db --> user : DSOs
+deactivate db
+user --> web : DSOs
+deactivate user
+
+loop for dsoID in DSOs
+    activate web
+    web -> user : getDSOdata (CPMSuserID, dsoID)
+    activate user
+    user -> db : checkDSO (CPMSuserID, dsoID)
+    activate db
+    db --> user : ack
+    deactivate db
+    user -> DSO : getDSOdata (CPMSuserID, dsoID)
+    activate DSO
+    DSO --> user : data
+    deactivate DSO
+    user --> web : data
+    deactivate user
+    web -->> cu : DSO, DSO data
+    deactivate web
+end

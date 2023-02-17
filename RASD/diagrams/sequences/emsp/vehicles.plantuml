@@ -1,0 +1,71 @@
+@startuml
+
+skinparam style strictuml
+autonumber
+
+actor Consumer as user
+participant Vehicle as vehicle
+database DataBase as db
+participant CPMShandler as cpms
+
+activate user
+user -> vehicle : get view
+activate vehicle
+vehicle --> user : view
+deactivate vehicle
+
+alt add a vehicle
+    user -> vehicle : send all data
+    activate vehicle
+    vehicle -> db : check vehicle
+    activate db
+    db --> vehicle : nack
+    deactivate db
+    vehicle -> db : add vehicle
+    activate db
+    db --> vehicle : ack
+    deactivate db
+    vehicle --> user : 200 OK, token
+    deactivate vehicle
+else select a vehicle
+    user -> vehicle : get vehicle view
+    activate vehicle
+    vehicle --> user : view
+    deactivate vehicle
+    alt edit the vehicle
+        user -> vehicle : send updated data
+        activate vehicle
+        vehicle -> db : check vehicle
+        activate db
+        db --> vehicle : nack
+        deactivate db
+        vehicle -> db : update vehicle
+        activate db
+        db --> vehicle : ack
+        deactivate db
+        opt edited certificate
+            vehicle -> cpms : update future reservations for that vehicle
+            activate cpms
+            cpms --> vehicle : ack
+            deactivate cpms
+        end
+        vehicle --> user : 200 OK, token
+        deactivate vehicle
+    else remove the vehicle
+        user -> vehicle : remove vehicle
+        activate vehicle
+        vehicle -> db : remove vehicle
+        activate db
+        db --> vehicle : ack
+        deactivate db
+        vehicle -> cpms : delete future reservations for that vehicle
+        activate cpms
+        cpms --> vehicle : ack
+        deactivate cpms
+        vehicle --> user : 200 OK, token
+        deactivate vehicle
+        deactivate user
+    end
+end
+
+@enduml

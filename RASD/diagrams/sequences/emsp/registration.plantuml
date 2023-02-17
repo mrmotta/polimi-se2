@@ -1,0 +1,43 @@
+@startuml
+
+skinparam style strictuml
+autonumber
+
+actor Consumer as user
+participant Registration as registration
+database DataBase as db
+
+activate user
+user -> registration : get view
+activate registration
+registration --> user : view
+deactivate registration
+
+user -> registration : send user's data
+activate registration
+registration -> db : check username
+activate db
+db --> registration : nack
+registration -> registration : check data
+activate registration
+registration --> registration : result
+deactivate registration
+registration -> db : add user data
+db --> registration : ack
+deactivate db
+registration --> user : confirm and send email
+deactivate registration
+
+user -> registration : confirm account
+activate registration
+registration -> db : check id (link)
+activate db
+db --> registration : ack
+registration -> db : activate user
+db --> registration : ack
+deactivate db
+registration --> user : 200 OK
+deactivate registration
+deactivate user
+
+@enduml

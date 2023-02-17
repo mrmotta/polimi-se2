@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="10.05416mm"
+   height="10.437813mm"
+   viewBox="0 0 10.05416 10.437813"
+   version="1.1"
+   id="svg5"
+   xml:space="preserve"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+     id="defs2"><linearGradient
+       id="linearGradient311"><stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="0"
+         id="stop307" /><stop
+         style="stop-color:#ff0000;stop-opacity:0;"
+         offset="1"
+         id="stop309" /></linearGradient><linearGradient
+       xlink:href="#linearGradient311"
+       id="linearGradient313"
+       x1="109.25713"
+       y1="87.528465"
+       x2="119.32782"
+       y2="97.998291"
+       gradientUnits="userSpaceOnUse" /></defs><g
+     id="layer1"
+     transform="translate(-109.25713,-87.528462)"><path
+       d="m 111.28119,97.966275 q -0.52917,0 -0.89297,-0.357187 -0.3638,-0.357188 -0.3638,-0.886355 v -7.315729 h -0.76729 v -1.243542 h 3.05593 v -0.635 h 3.92907 v 0.635 h 3.06916 v 1.243542 H 118.544 v 7.315729 q 0,0.515938 -0.37041,0.87974 -0.37042,0.363802 -0.88636,0.363802 z m 6.00604,-8.559271 h -6.00604 v 7.315729 h 6.00604 z m -4.66989,6.283854 h 1.01864 v -5.278437 h -1.01864 z m 2.3151,0 h 1.03187 v -5.278437 h -1.03187 z m -3.65125,-6.283854 v 7.315729 z"
+       id="path132"
+       style="stroke-width:0.264583;fill:#c00000;fill-opacity:1" /><path
+       d="m 111.28119,97.966275 q -0.52917,0 -0.89297,-0.357187 -0.3638,-0.357188 -0.3638,-0.886355 v -7.315729 h -0.76729 v -1.243542 h 3.05593 v -0.635 h 3.92907 v 0.635 h 3.06916 v 1.243542 H 118.544 v 7.315729 q 0,0.515938 -0.37041,0.87974 -0.37042,0.363802 -0.88636,0.363802 z m 6.00604,-8.559271 h -6.00604 v 7.315729 h 6.00604 z m -4.66989,6.283854 h 1.01864 v -5.278437 h -1.01864 z m 2.3151,0 h 1.03187 v -5.278437 h -1.03187 z m -3.65125,-6.283854 v 7.315729 z"
+       id="path245"
+       style="stroke-width:0.264583;fill:url(#linearGradient313);fill-opacity:1" /></g></svg>

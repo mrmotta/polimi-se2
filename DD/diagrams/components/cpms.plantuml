@@ -1,0 +1,128 @@
+@startuml cpms
+
+package CPMS {
+    [PaymentHandler] as payment
+    [APIhandler] as cpmsapi
+    [eMSPhandler] as emsp
+    [User] as user
+    [ChargingStation] as station
+    [ChargingColumn] as column
+    [EnergySource] as energy
+    [DSOhandler] as dso
+    [eRoamingHandler] as eroaming
+    [DatabaseHandler] as dbms
+    [Booking]
+    [Web Server] as web
+
+    () "SourceInterface" as sourceI
+    energy - sourceI
+    sourceI )- station
+
+    () "StationInterface" as stationI
+    Booking --( stationI
+    stationI -- station
+    user --( stationI
+
+    () "ColumnInterface" as columnI
+    columnI -- column
+    station --( columnI
+
+    () "eMSPinterface" as eI
+    eI - emsp 
+    Booking --( eI 
+    eI )- station
+    eI )-- payment
+
+    () "DSOinterface" as dsoI
+    dsoI - dso
+    dsoI )- station
+
+    () "DatabaseInterface" as dbI
+    dbI - dbms
+    Booking -( dbI
+    station -( dbI
+    user -----( dbI
+    dbI )-- column
+    energy --( dbI
+    eroaming --( dbI
+    dbI )-- payment
+    cpmsapi --( dbI
+
+    () "BookingInterface" as bI
+    Booking - bI
+    bI )- cpmsapi
+
+    () "UserInterface" as uI
+    web -( uI
+    uI - user
+
+    () "PaymentInterface" as pI
+    pI - payment
+    column -( pI
+
+    /' last column '/
+    cpmsapi --[hidden] emsp
+    cpmsapi --[hidden] emsp
+    cpmsapi --[hidden] emsp
+    emsp --[hidden] dso
+    dso --[hidden] eroaming
+    dbms --[hidden] payment
+    eroaming --[hidden] dbms
+    eroaming --[hidden] dbms
+    eroaming --[hidden] dbms
+    
+    bI --[hidden] eI
+    eI --[hidden] dsoI
+    dsoI --[hidden] dbI
+    station -[hidden] dsoI
+    energy -[hidden] columnI
+    columnI -[hidden] eroaming
+}
+
+package DSO {
+    [APIhandler] as dh
+}
+
+package eMSP {
+    [CPMShandler] as cpmsh
+    [APIhandler] as eAh
+    cpmsh --[hidden] eAh
+}
+
+package eRoaming {
+    [APIhandler] as erh
+}
+
+package PaymentService {
+    [APIhandler] as ph
+}
+
+package CPMSuser {
+    [browser]
+}
+
+() "CPMSapi" as cpmsA
+cpmsapi - cpmsA
+cpmsA )- cpmsh
+
+() "eMSPapi" as emspA
+emsp -( emspA
+emspA - eAh
+
+cpmsA --[hidden]emspA
+
+() "dsoApi" as dsoA
+dso -( dsoA
+dsoA - dh
+
+() "eRoamingApi" as eroamingA
+eroaming -( eroamingA
+eroamingA - erh
+
+() "paymentApi" as paymentA
+payment -( paymentA
+paymentA - ph
+
+() "REST" as rest
+rest -- web
+rest )- browser

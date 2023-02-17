@@ -1,0 +1,140 @@
+@startuml
+
+interface BookingInterface {
+    __
+    + getBookings (user)
+    + getChargesToPay (user)
+    ..
+    + book (user, station, slot, vehicle)
+    + delete (booking)
+    + paid (charges)
+    + removeBooking (user, vehicle)
+    + updateBookingsFor (user, vehicle, certificate)
+}
+
+interface CPMSinterface {
+    __
+    + getAvailabilities (station, vehicle)
+    + getChargesToPay (user)
+    + getAllBookings (user)
+    + getFutureBookings (user)
+    + getFutureBookings (user, vehicle)
+    + getStationInfo (station)
+    + getStationsInRadius (coordinates, radius)
+    ..
+    + book (user, station, slot, vehicle)
+    + confirmPayment (charges)
+    + deleteBooking (booking)
+    + handshake (cpms)
+    + updateBooking (station, oldSlot, newSlot, vehicle)
+    + updateBookingCertificate (booking, certificate)
+}
+
+interface DatabaseInterface {
+    __
+    + getCertificate (vehicle)
+    + getCPMS (id)
+    + getCPMSs ()
+    + getFavoriteStations (user)
+    + getInfo ()
+    + getNotificationPreference (user)
+    + getSocket (vehicle)
+    + getStationInfo (station)
+    + getStationsInRadius (coordinates, radius)
+    + getVehicles (user)
+    ..
+    + activateUserBy (activationId)
+    + addCPMS (cpms)
+    + addUserVehicle (user, vehicle)
+    + cacheStationInfo (information)
+    + checkUser (username, password)
+    + createUser (email, pwd, name, surname, birth)
+    + deleteUser (name)
+    + existsUser (name, surname, birthdate)
+    + existsUsername (email)
+    + removeUserVehicle (user, vehicle)
+    + resetPassword (user)
+    + resetPassword (id, password)
+    + toggleFavorite (user, station)
+    + updateDevice (user, device)
+    + updateUser (user, newData)
+    + updateVehicle (old, new)
+}
+
+interface DeviceInterface {
+    + notifyBooking (user, details)
+    + notifyBookingUpdate (user, details)
+    + notifyBookingDeletion (user, details)
+    + notifyPayment (user, details)
+    + updateDevice (user, device)
+}
+
+interface EmailInterface {
+    + sendActivation (email, activationId)
+    + notifyBooking (email, details)
+    + notifyBookingUpdate (email, details)
+    + notifyBookingDeletion (email, details)
+    + notifyPayment (email, details)
+}
+
+interface NotificationInterface {
+    + notify (device, message)
+}
+
+interface PaymentInterface {
+    + pay (paymentInfo, amount)
+}
+
+interface UserInterface {
+    __
+    + getAllBookings (user)
+    + getBookings (user)
+    + getChargesToPay (user)
+    + getFavoriteStations (user)
+    ..
+    + activateUserBy (activationId)
+    + addVehicle (user, vehicle)
+    + authenticate (username, password)
+    + book (user, station, slot, vehicle)
+    + createUser (email, pwd, name, surname, birth)
+    + deleteBooking (user, booking)
+    + deleteUser (user)
+    + export (user)
+    + manageNotification (user, message)
+    + pay (user, charges, paymentInfo)
+    + removeVehicle (user, vehicle)
+    + resetPassword (user)
+    + resetPassword (id, password)
+    + toggleFavorite (user, station)
+    + updateBooking (user, old, slot, vehicle)
+    + updateUser (user, newData)
+    + updateVehicle (user, vehicles, new)
+}
+
+interface VehicleInterface {
+    __
+    + getCertificate (vehicle)
+    + getSocket (vehicle)
+    ..
+    + addVehicle (user, vehicle)
+    + removeVehicle (user, vehicle)
+    + updateVehicle (old, new)
+}
+
+NotificationInterface <. DeviceInterface
+DeviceInterface <.. UserInterface : ""
+DeviceInterface ..> DatabaseInterface : ""
+VehicleInterface <.. UserInterface : ""
+VehicleInterface ..> DatabaseInterface : ""
+EmailInterface <. UserInterface : ""
+UserInterface .> DatabaseInterface : ""
+DatabaseInterface <.. CPMSinterface : ""
+UserInterface ..> PaymentInterface : ""
+UserInterface ..> BookingInterface : ""
+BookingInterface .> CPMSinterface : ""
+
+NotificationInterface --[hidden] EmailInterface
+DeviceInterface -right[hidden] VehicleInterface
+PaymentInterface -right[hidden] BookingInterface
+
+@enduml

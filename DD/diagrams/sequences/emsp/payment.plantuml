@@ -1,0 +1,113 @@
+@startuml
+
+skinparam style strictuml
+autonumber
+
+actor Consumer as consumer
+participant CPMSapi as api
+participant "Web server" as web
+participant EmailHandler as email
+participant CPMShandler as cpms
+participant User as user
+participant BookingHandler as booking
+participant PaymentHandler as payment
+participant DeviceHandler as device
+participant DatabaseHandler as db
+
+activate consumer
+consumer -> web : get view
+activate web
+web --> consumer : view
+deactivate web
+
+consumer -> web : get charge to pay
+activate web
+web -> user : getChargesToPay (user)
+activate user
+user -> booking : getChargesToPay (user)
+activate booking
+loop for every cpms
+    booking -> cpms : getChargesToPay (user)
+    activate cpms
+    cpms -> api : getChargesToPay (user)
+    activate api
+    api --> cpms : charges
+    deactivate api
+    cpms --> booking : charges
+    deactivate cpms
+end
+booking --> user : charges
+deactivate booking
+user --> web : details
+deactivate user
+web --> consumer : booking details
+deactivate web
+
+consumer -> web : get payment view
+activate web
+web --> consumer : view
+deactivate web
+
+consumer -> web : payment data
+activate web
+web -> user : pay (user, charges, paymentInfo)
+activate user
+user -> payment : pay (paymentInfo, amount)
+activate payment
+payment -> payment : check (data)
+activate payment
+payment --> payment : ack
+deactivate payment
+payment -> payment : pay (paymentInfo, amount)
+activate payment
+payment --> payment : ack
+deactivate payment
+
+payment --> user : ack
+deactivate payment
+user --> web : ack
+web --> consumer : 200 OK
+deactivate web
+deactivate consumer
+
+par
+    user -> db : getNotificationPreference (user)
+    activate db
+    db --> user : preference
+    deactivate db
+    alt in-app notification and any available device
+        loop for each device
+            user -> device : notifyPayment (user, details)
+            activate device
+            device -> web : notify (device, message)
+            activate web
+            web --> device : ack
+            deactivate web
+            device --> user : ack
+            deactivate device
+        end
+    else email notification
+        user -> email : notifyPayment (email, details)
+        activate email
+        email --> user : ack
+        deactivate email
+    end
+else
+    user -> booking : paid (charges)
+    activate booking
+    loop for every cpms
+        booking -> cpms : confirmPayment (cpmsCharges)
+        activate cpms
+        cpms -> api : confirmPayment (charges)
+        activate api
+        api --> cpms
+        deactivate api
+        cpms --> booking : ack
+        deactivate cpms
+    end
+    booking --> user : ack
+    deactivate booking
+    deactivate user
+end
+
+@enduml

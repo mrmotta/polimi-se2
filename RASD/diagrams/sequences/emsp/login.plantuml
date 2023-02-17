@@ -1,0 +1,30 @@
+@startuml
+
+skinparam style strictuml
+autonumber
+
+actor Consumer as user
+participant Login as login
+database DataBase as db
+
+activate user
+user -> login : get view
+activate login
+login --> user : view
+deactivate login
+
+user -> login : send username and password
+activate login
+login -> db : check username and password
+activate db
+db --> login : ack
+deactivate db
+login -> db : get user's information and vehicles
+activate db
+db --> login : user and vehicles
+deactivate db
+login --> user : home page, token
+deactivate login
+deactivate user
+
+@enduml

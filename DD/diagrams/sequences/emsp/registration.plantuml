@@ -1,0 +1,57 @@
+@startuml
+
+skinparam style strictuml
+autonumber
+
+actor Consumer as consumer
+participant "Web server" as web
+participant User as user
+participant EmailHandler as email
+participant DatabaseHandler as db
+
+activate consumer
+consumer -> web : get view
+activate web
+web --> consumer : view
+deactivate web
+
+consumer -> web : send user's data
+activate web
+web -> user : createUser (email, pwd, name, surname, birth)
+activate user
+user -> db : existsUsername (email)
+activate db
+db --> user : nack
+deactivate db
+user -> db : existsUser (name, surname, birthdate)
+activate db
+db --> user : nack
+deactivate db
+user -> db : createUser (email, pwd, name, suername, birth)
+activate db
+db --> user : activationId
+deactivate db
+user -> email : sendActivation (email, activationId)
+activate email
+email --> user : ack
+deactivate email
+user --> web : ack
+deactivate user
+web --> consumer : 200 OK
+deactivate web
+
+consumer -> web : confirm account
+activate web
+web -> user : activateUserBy (activationId)
+activate user
+user -> db : activateUserBy (activationId)
+activate db
+db --> user : ack
+deactivate db
+user --> web : ack
+deactivate user
+web --> consumer : 200 OK
+deactivate web
+deactivate consumer
+
+@enduml

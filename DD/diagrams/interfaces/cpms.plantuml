@@ -1,0 +1,127 @@
+@startuml
+
+interface BookingInterface{
+    + addBooking (eMSPuserID, certificate, stationID, slot)
+    + deleteBooking (bookingID)
+    + updateBooking (bookingID, certificate, slot)
+}
+
+interface ColumnInterface{
+    + addObserver (observer)
+    + endCharge ()
+    + startCharge ()
+}
+
+interface DatabaseInterface{
+    __
+    + getAvailabilities (StationID, socketType)
+    + getAllBookings(eMSPuserID)
+    + getChargesToPay (eMSPuserID)
+    + getDSOs (CPMSuserID)
+    + getOffers (CPMSuserID)
+    + getCPMSuserID (username)
+    + getFutureBookings (eMSPuserID)
+    + getPassword (CPMSuserID)
+    + getPayment (bookingID)
+    + getSalt (CPMSuserID)
+    + getSensorsData (stationID)
+    + getSources (CPMSuserID, stationID)
+    + getStationData (CPMSuserID, stationID)
+    + getStationInfo (stationID)
+    + getStations (CPMSuserID)
+    + getStationsInRadius (centerCoordinates, radius)
+    ..
+    + checkDSO (CPMSuserID, dsoID)
+    + checkOffer (CPMSuserID, offerID)
+    + checkStation (CPMSuserID, stationId)
+    ..
+    + setAutomaticDSOchoice (CPMSuserID, stationID, value)
+    + setAutomaticEnergyMix (CPMSuserID, stationID, value)
+    + setPassword (CPMSuserID, newPassword)
+    ..
+    + addBooking (eMSPuserID, certificate, stationID, slot)
+    + add_eMSP (eMSP)
+    + confirmPayment (bookingID)
+    + createNewOffer (CPMSuserID, stationID, discount, start, end)
+    + createNewOfferAllStations (CPMSuserID, discount, start, end)
+    + defineEnergyMix (stationID, usedSources)
+    + deleteBooking (bookingID)
+    + deleteOffer (CPMSuserID, offerID)
+    + endCharge (columnID)
+    + selectDSO (CPMSuserID, stationID, dsoID)
+    + startCharge (columnID)
+    + storePayment (eMSPuserID, bookingID, paymentData)
+    + updateBooking (bookingID, certificate, slot)
+}
+
+
+interface DSOinterface{
+    __
+    + getData (dsoID)
+    ..
+    + selectDSO (dsoID)
+}
+
+interface eMSPinterface{
+    + sendNotification (eMSP_ID, eMSPuserID, message)
+}
+
+interface PaymentInterface{
+    + payCharge (eMSPuserID, paymentData)
+}
+
+interface SourceInterface{
+    + addObserver (observer)
+    + defineEnergyMix (usedSources)
+}
+
+interface StationInterface{
+    __
+    + getDSOdata (CPMSuserID, dsoID)
+    ..
+    + setAutomaticDSOchoice (CPMSuserID, stationID, value)
+    + setAutomaticEnergyMix (CPMSuserID, stationID, value)
+    ..
+    + defineEnergyMix (CPMSuserID, stationID,  usedSources)
+    + endBatteryCharge (sourceID)
+    + endCarCharge (coulmnID)
+    + selectDSO (CPMSuserID, stationID, dsoID)
+}
+
+interface UserInterface{
+    __
+    + getDSOdata (CPMSuserID, dsoID)
+    + getDSOs (CPMSuserID)
+    + getOffers (CPMSuserID)
+    + getSources (CPMSuserID, stationID)
+    + getStationInfo (CPMSuserID, stationID)
+    + getStations (CPMSuserID)
+    ..
+    + setAutomaticDSOchoice (CPMSuserID, stationID, value)
+    + setAutomaticEnergyMix (CPMSuserID, stationID, value)
+    + setPassword (CPMSuserID, newPassword)
+    ..
+    + createNewOffer (CPMSuserID, stationID, discount, start, end)
+    + defineEnergyMix (CPMSuserID, stationID, usedSources)
+    + deleteOffer (CPMSuserID, offerID)
+    + login (username, password)
+    + logout ()
+    + selectDSO (CPMSuserID, stationID, dsoID)
+}
+
+UserInterface .> DatabaseInterface
+StationInterface ..> DatabaseInterface
+ColumnInterface ..> DatabaseInterface
+SourceInterface ..> DatabaseInterface
+DatabaseInterface <.. BookingInterface
+DatabaseInterface <.. PaymentInterface
+
+StationInterface <.. UserInterface
+DSOinterface <. StationInterface
+StationInterface .> SourceInterface
+StationInterface .> ColumnInterface
+StationInterface ..> eMSPinterface
+eMSPinterface <. BookingInterface
+ColumnInterface ..> PaymentInterface 
+
+@enduml

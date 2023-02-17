@@ -1,0 +1,52 @@
+@startuml
+
+skinparam actorStyle awesome
+left to right direction
+
+actor "eMSP unregistered user" as unregistered_user
+actor "eMSP registered user" as registered_user
+
+package eMSP {
+  usecase "Sign-up" as signup
+  usecase "Login" as login
+  usecase "Password change" as pwchange
+  usecase "Logout" as logout
+  usecase "Notification preference" as notifications
+  usecase "Add/delete/edit car data" as cars
+  usecase "Look for nearby stations" as stations_lookup
+  usecase "Mark/unmark stations as favorites" as stations_favorites
+  usecase "Book a charging station" as book
+  usecase "Show booked charges" as book_show
+  usecase "Payment" as payment
+  interface "CPMSs API" as api
+}
+
+unregistered_user ---> signup
+registered_user ---> login
+registered_user ---> pwchange
+registered_user ---> logout
+registered_user ---> notifications
+registered_user ---> cars
+registered_user ---> stations_lookup
+registered_user ---> stations_favorites
+registered_user ---> book
+registered_user ---> book_show
+registered_user ---> payment
+
+pwchange ...> login : "may require"
+logout ...> login : "requires"
+notifications ...> login : "requires"
+cars ...> login : "requires"
+stations_lookup ...> login : "requires"
+stations_favorites ...> login : "requires"
+book ...> login : "requires"
+book_show ...> login : "requires"
+payment ...> login : "requires"
+
+stations_favorites ..> stations_lookup : "uses"
+book ..> stations_lookup : "uses"
+
+stations_lookup ...> api : "queries"
+book_show ...> api : "queries"
+
+@enduml

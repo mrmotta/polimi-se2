@@ -1,0 +1,137 @@
+@startuml emsp
+
+' eMSP
+
+package eMSP {
+
+    [PaymentHandler] as payment
+    [APIhandler] as apiHandler
+    [CPMShandler] as cpms
+    [BookingHandler] as booking
+    [User] as user
+    [Vehicle] as vehicle
+    [Device] as device
+    [eRoamingHandler] as eroaming
+    [EmailHandler] as email
+    [DatabaseHandler] as database
+    [Web server] as web
+
+    web --[hidden] apiHandler
+    payment ---[hidden] email
+    apiHandler --[hidden] booking
+    email --[hidden] device
+    email --[hidden] device
+    email --[hidden] device
+    device --[hidden] vehicle
+    cpms --[hidden] eroaming
+
+    () "NotificationInterface" as notificationInterface
+    notificationInterface )- web
+    notificationInterface -- device
+
+    () "PaymentInterface" as paymentInterface
+    payment -- paymentInterface
+    paymentInterface )-- user
+
+    () "UserInterface" as userInterface
+    userInterface -- user
+    web --( userInterface
+    userInterface )- apiHandler
+
+    () "EmailInterface" as emailInterface
+    email - emailInterface
+    emailInterface )- user
+
+    () "CPMSintreface" as cpmsInterface
+    cpmsInterface -- cpms
+    booking --( cpmsInterface
+    user --( cpmsInterface
+    cpmsInterface )--- eroaming
+
+    () "BookingInterface" as bookingInterface
+    bookingInterface - booking
+    user -( bookingInterface
+    web --( cpmsInterface
+
+    () "DeviceInterface" as deviceInterface
+    device - deviceInterface
+    user --( deviceInterface
+
+    () "VehicleInterface" as vehicleInterface
+    vehicle - vehicleInterface
+    user ---( vehicleInterface
+
+    () "DatabaseInterface" as dataInterface
+    database - dataInterface
+    dataInterface )- eroaming
+    vehicle --( dataInterface
+    device ---( dataInterface
+    user ----( dataInterface
+    cpms --( dataInterface
+
+    emailInterface --[hidden] deviceInterface
+}
+
+' Payment service
+
+package PaymentService {
+    [APIhandler] as paymentHandler
+}
+
+' Email service
+
+package EmailService {
+    [APIhandler] as emailHandler
+}
+
+' eRoaming service
+
+package eRoaming {
+    [APIhandler] as eroamingHandler
+}
+
+' Client
+
+package Client {
+    [App or browser] as client
+}
+
+' CPMS
+
+package CPMS {
+
+    [APIhandler] as cpmsHandler
+    [eMSPhandler] as emspHandler
+
+    emspHandler --[hidden] cpmsHandler
+}
+
+' External interfaces
+
+() "REST" as rest
+web - rest
+rest )- client
+
+() "eMSPapi" as emspApi
+apiHandler - emspApi
+emspApi )-- emspHandler
+
+() "CPMSapi" as cpmsApi
+cpms -( cpmsApi
+cpmsHandler -- cpmsApi
+
+() "eRoamingAPI" as eroamingApi
+eroaming -( eroamingApi
+eroamingApi - eroamingHandler
+
+() "PaymentAPI" as paymentApi
+paymentApi - paymentHandler
+paymentApi )-- payment
+
+() "EmailAPI" as emailApi
+emailApi )-- email
+emailHandler -- emailApi
+
+PaymentService --[hidden] EmailService
+
+@enduml

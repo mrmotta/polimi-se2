@@ -1,0 +1,107 @@
+\chapter{Implementation, Integration and Test Plan} \label{iitp}
+
+\section{Introduction}
+
+After having described all the components of the system and their interconnections, this chapter describes how these should be implemented, integrated, and tested in order to have two fully working systems: the eMSP's and the CPMS's.\medskip
+
+In general, the method followed for building up both of the systems is to first start with a bottom-up approach to create the component that directly interacts with the database, to have a fully working data retrieval and management. Then a thread approach is used to develop all the other components in parallel (maybe even across multiple teams), dividing the work by functionality. Meanwhile, it's possible to test the correct functioning of every part of the system and to provide some betas of the software to the stakeholders\footnote{The \textit{stakeholders} are the ones who own shares in an enterprise.}, to let them check that all the required functionalities have been implemented according to their needs and desires.
+
+\subsection{Terminology}
+
+\paragraph{Development strategies} Just to be even more clear, here we provide a brief description of some strategies nominated in this section. There are references to the components interfaces of the two systems that can be found in \reference{view:interfaces}.
+\begin{itemize}
+    \item \textit{Bottom-up approach}: the bottom-up approach consists in starting building the system from its foundations, which is made of the components in the leaves of a \doublequotes{uses} hierarchy. Starting from there, the strategy goes up to the root of the hierarchy.
+    \item \textit{Thread approach}: the thread approach focuses more on developing specific functionalities across multiple components, thus developing a single piece of all the touched components.
+\end{itemize}
+
+\paragraph{Testing strategies} Testing software is not trivial and there are multiple methods for doing it. Every strategy has its own goals and here are reported the ones nominated in this chapter.
+\begin{itemize}
+    \item \textit{Load testing}: this kind of test helps to identify eventual memory leaks, buffer overflows, and in general any problem related to memory usage. Even though the choice of the language (or languages) to use is not enforced here, we suggest using the Rust language for avoiding these kinds of errors.
+    \item \textit{Performance testing}: its main purpose is to identify any bottleneck of the application, therefore affecting response times and general throughput.
+    \item \textit{Stress testing}: the main purpose of a stress test is to check if the system is able to gracefully adapt and recover after some failures.
+    \item \textit{Unit testing}: this testing is done in order to check whether the functions of the system (or groups of them) do what they are supposed to.
+\end{itemize}
+
+\vfill
+
+\pagebreak
+
+\section{eMSP}
+
+First, here we provide the description of how the eMSP should be implemented, integrated, and tested. The flow follows the general description provided above in the introduction.
+
+\subsection{Implementation plan}
+
+\paragraph{Step 1 (bottom-up)}\label{emsp:bottomup} As stated in the introduction, the implementation should start with a bottom-up approach, by first implementing the \texttt{DatabaseHandler}, which is the component in charge of providing all the data to the above layers of the business layer and to do some processing with them. During this phase, it's also suggested to start developing the internal functions of the \texttt{PaymentHandler} and the \texttt{EmailHandler} (in this last case, like the methods for connecting to the SMTP server and general methods for building up and sending the emails).
+
+\paragraph{Step 2 (thread)}\label{emsp:thread} After having fully developed the \texttt{DatabaseHandler}, the rest of the components should be developed in parallel following a thread approach, first focusing on the main functionalities that the eMSP should provide, and then moving to the other ones (like the password reset, the account activation procedure\dots). Together with this, the NGINX configuration should be created and updated in order to allow it to redirect the traffic accordingly to the various components.
+
+\paragraph{Step 3 (frontend)}\label{emsp:frontend} While developing all the components presented in the previous step, the frontend can also be developed, possibly following the development of the various functionalities, but it's not mandatory. In case of problems, it's possible to easily change the frontend JavaScript querying and displaying functions.
+
+\subsection{Integration plan}
+
+The integration plan roughly follows the implementation plan presented above.
+
+\paragraph{Components of \nameref{emsp:bottomup}} These few components should be integrated with the other ones following the developed threads.
+
+\paragraph{Components of \nameref{emsp:thread}} Since the main part of the development is done following a thread-based approach, the integration of many of the components is done directly while developing them. Integrating the various threads, instead, should be done whenever any thread is completed.
+
+\paragraph{Components of \nameref{emsp:frontend}} The frontend should be integrated with the underlying components as soon as the functionalities have been developed, in order to also provide some betas of the software to the stakeholders.
+
+\subsection{Test plan}
+
+The test plan for the system is slightly more complex than what was done in with the previous plans.\medskip
+
+For every component or thread, after it has been developed, a unit test should be performed in order to immediately spot any possible bug in the implementation.\medskip
+
+Moreover, for any completed thread, some other tests should be performed in order to discover some other more subtle bugs in the software and to possibly optimize the performance of the whole system:
+\begin{itemize}
+    \item \textit{Performance testing}: this is done for spotting the bottlenecks.
+    \item \textit{Load testing}: this is done to identify memory leaks, overflows or other memory-related problems.
+    \item \textit{Stress testing}: its purpose is instead to recover gracefully after failures.
+\end{itemize}
+
+Once any beta version of the software is available, it's possible to perform some acceptance testing which should be conducted by different people, maybe also the stakeholders, for testing the usability of the system.
+
+\pagebreak
+
+\section{CPMS}
+
+We'll now describe how the CPMS system should be implemented, integrated, and tested. The flow follows the general description provided above in the introduction.
+
+\subsection{Implementation plan}
+
+\paragraph{Step 1 (bottom-up)}\label{cpms:bottomup} As stated in the introduction, the implementation should start with a bottom-up approach, by first implementing the \texttt{DatabaseHandler}, which is the component in charge of providing all the data to the above layers of the business layer and to do some processing with them. After the \texttt{DatabaseHandler} is completed, The \texttt{ChargingStation}, \texttt{ChargingColumn}, and \texttt{EnergySource} should be implemented, and possibly be connected to their physical counterparts or to similar components. 
+
+\paragraph{Step 2 (thread)}\label{cpms:thread} After having fully developed the components mentioned in step one, the rest of the components should be developed in parallel following a thread approach, first focusing on the main functionalities that the CPMS should provide, like the booking mechanism. After those, the focus should be on the components that interact with, or offer, external interfaces. Together with this, the NGINX configuration should be created and updated in order to allow it to redirect the traffic accordingly to the various components.
+
+\paragraph{Step 3 (frontend)}\label{cpms:frontend} While developing all the components presented in the previous steps, the frontend can also be developed, possibly following the development of the various functionalities, but it's not mandatory. In case of problems, it's possible to easily change the frontend JavaScript querying and displaying functions.
+
+\subsection{Integration plan}
+
+The integration plan roughly follows the eMSP implementation plan.
+
+\paragraph{Components of \nameref{cpms:bottomup}} The components implemented in the bottom-up approach should all be integrated as they are developed, making use of mockup physical counterparts to ensure their correct functioning.
+
+\paragraph{Components of \nameref{cpms:thread}} Since the main part of the development is done following a thread-based approach, the integration of many of the components is done directly while developing them. Integrating the various threads, instead, should be done whenever any thread is completed.
+
+\paragraph{Components of \nameref{cpms:frontend}} The frontend should be integrated with the underlying components as soon as the functionalities have been developed, in order to also provide some betas of the software to the stakeholders.
+
+\subsection{Test plan}
+
+The test plan for the CPMS system should roughly follow the same test plan for the eMSP system. \medskip
+
+For every component or thread, after it has been developed, a unit test should be performed in order to immediately spot any possible bug in the implementation.\medskip
+
+Tests for the \texttt{ChargingColumn}, the \texttt{ChargingStation}, and the \texttt{EnergySource} should be conducted on their physical counterparts as well as on the components.
+
+Moreover, for any completed thread, the same tests specified for the eMSP system should be performed in order to discover some other more subtle bugs in the software and to possibly optimize the performance of the whole system:
+\begin{itemize}
+    \item \textit{Performance testing}: this is done for spotting the bottlenecks.
+    \item \textit{Load testing}: this is done to identify memory leaks, overflows, or other memory-related problems.
+    \item \textit{Stress testing}: its purpose is instead to recover gracefully after failures.
+\end{itemize}
+
+Once any beta version of the software is available, it's possible to perform some acceptance testing which should be conducted by different people, maybe also the stakeholders, for testing the usability of the system.
+
+Particular attention should be paid to how the physical elements behave when the system is in place, and tests should be done while consulting specialists in the electronic components to ensure the success of the system.

@@ -1,0 +1,37 @@
+@startuml login
+
+skinparam style strictuml
+autonumber
+
+actor User as u
+participant ViewController as sys
+database DataBase as db
+
+activate u
+u -> sys : input
+activate sys
+
+sys -> db : get user info
+activate db
+db --> sys : info
+deactivate db
+sys -> sys: check input
+
+
+alt wrong or missing data
+    sys --> u: wrong or missing input
+else matching data
+    sys -> db : get available DSOs
+    activate db
+    db --> sys : data
+    deactivate db
+    sys -> db : get managed charging stations
+    activate db
+    db --> sys : data
+    deactivate db
+    sys --> u: home view, token
+    deactivate sys
+end
+
+
+@enduml

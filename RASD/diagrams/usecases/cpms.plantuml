@@ -1,0 +1,48 @@
+@startuml
+
+skinparam actorStyle awesome
+left to right direction
+
+actor "CPMS user" as u
+
+package CPMS {
+  usecase "Login" as login
+  usecase "Logout" as logout
+  usecase "Password change" as pwchange
+  usecase "Activate/deactivate automatic mix choice" as MixonOff
+  usecase "Define a new energy mix" as defMix
+  usecase "Activate/deactivate automatic DSO choice" as DSOonOff
+  usecase "Change DSO" as changeDSO
+  interface "DSO API" as DSOApi
+  usecase "Get info about a specific DSO price" as DSOprice 
+  usecase "Modify automatic DSO payment method" as DSOpayment
+  usecase "Get info about a charging station internal/external status" as csInfo
+  usecase "Create/remove a special offer" as offer
+}
+
+u ---> login
+u ---> logout
+u ---> pwchange
+u ---> MixonOff
+u ---> defMix
+u ---> DSOonOff
+u ---> changeDSO
+u ---> DSOprice 
+u ---> DSOpayment
+u ---> csInfo
+u ---> offer
+
+logout ...> login : "requires"
+pwchange ...> login : "may require"
+MixonOff ...> login : "requires"
+defMix ...> login : "requires"
+DSOonOff ...> login : "requires"
+changeDSO ...> login : "requires"
+DSOprice ...> login : "requires"
+DSOpayment ...> login : "requires"
+csInfo ...> login : "requires"
+offer ...> login : "requires"
+
+DSOprice .> DSOApi : "uses"
+
+@enduml

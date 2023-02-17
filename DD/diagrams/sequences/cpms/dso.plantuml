@@ -1,0 +1,87 @@
+@startuml dso
+
+skinparam style strictuml
+autonumber
+
+actor "CPMS user" as cu
+participant DatabaseHandler as db
+participant "Web Server" as web
+participant "ChargingStation" as station
+participant "DSOhandler" as DSO
+participant User as user
+
+activate cu
+activate web
+
+cu -> web : activate automatic dso choice
+activate web
+web -> user : setAutomaticDSOchoice (CPMSuserID, stationID, true)
+activate user
+user -> station : setAutomaticDSOchoice (CPMSuserID, stationID, true)
+activate station
+station -> db : setAutomaticDSOchoice (CPMSuserID, stationID, true)
+activate db
+db --> db : checkStation (CPMSuserID, stationId)
+db --> station : ack
+deactivate db
+
+station --> user : ack
+
+par 
+    user --> web: ack
+    deactivate user
+    web --> cu: ack
+    deactivate web
+else 
+    loop until automatic dso choice is deactivated
+        station -> db : getDSOs (CPMSuserID)
+        activate station
+        activate db
+        db --> station : DSOs
+        deactivate db
+
+        loop for dsoID in DSOs
+            station -> DSO : getData (dsoID)
+            activate DSO
+            DSO --> station : data
+            deactivate DSO
+        end
+        
+        station -> DSO : selectDSO (dsoID)
+        activate DSO
+        DSO --> station : ack
+        deactivate DSO
+        
+        station --> station : wait
+    end
+end
+
+cu -> web : select DSO
+activate web
+web -> user : selectDSO (CPMSuserID, stationID, dsoID)
+activate user
+user -> station : selectDSO (CPMSuserID, stationID, dsoID)
+activate station
+station -> db : setAutomaticDSOchoice (CPMSuserID, stationID, false)
+activate db
+db --> db : checkStation (CPMSuserID, stationId)
+db --> station : ack
+deactivate db
+station -> db : selectDSO (CPMSuserID, stationID, dsoID)
+activate db
+db --> db : checkStation (CPMSuserID, stationId)
+db --> station : ack
+deactivate db
+
+station -> DSO : selectDSO (dsoID)
+activate DSO
+DSO --> station : ack
+deactivate DSO
+station --> user : ack 
+deactivate station
+user --> web : ack
+deactivate user
+web --> cu : ack
+deactivate web
+
+@enduml

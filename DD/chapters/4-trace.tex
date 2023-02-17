@@ -1,0 +1,212 @@
+\chapter{Requirements Traceability} \label{traceability}
+
+It's important to check that all the requirements pointed out into the \textit{Requirements Analysis and Specification Document} of the \textsc{eMall} project are actually satisfied into the design of the system. That's why in this section every requirement is mapped into one or more components of the system.
+
+\section{Requirements}
+
+For reference purposes, here are reported all the requirements for the systems, divided into \textit{eMSP requirements} and \textit{CPMS requirements}.
+
+\subsection{eMSP requirements}
+
+\begin{center}
+    \begin{tabular}{ | >{\centering\arraybackslash}m{0.1\columnwidth} | >{\arraybackslash}m{0.84\columnwidth} | }
+        \hline
+        \textbf{Identifier} & \multicolumn{1}{c|}{\textbf{Description}} \\
+        \hline
+        \hline
+        \showR{r:e:signup} & The system must allow the user to sign-up. \\
+        \hline
+        \showR{r:e:signup_check} & The system must check the sign-up data. \\
+        \hline
+        \showR{r:e:signup_mail} & The system must send the user an email for activating the account after a successful sign-up. \\
+        \hline
+        \showR{r:e:signup_activation} & The system must discard any account activation request that arrives after 24 hours from the sign-up procedure. \\
+        \hline
+        \showR{r:e:signup_not_activated} & The system must consider any signed-up user who hasn't already activated the account as an unregistered user. \\
+        \hline
+        \showR{r:e:signup_success} & The system must notify the user of the sign-up result, sending an email if it's successful. \\
+        \hline
+        \showR{r:e:login} & The system must allow the user to log in. \\
+        \hline
+        \showR{r:e:login_check} & The system must check the login data. \\
+        \hline
+        \showR{r:e:pwchange} & The system must allow the user to change his/her password after logging in. \\
+        \hline
+        \showR{r:e:pwreset} & The system must allow any registered user to reset his/her password by sending an email to the specified address. \\
+        \hline
+        \showR{r:e:pwreset_timeout} & The system must discard any password change 24 hours after the request. \\
+        \hline
+        \showR{r:e:pwreset_duplicate} & The system must discard any duplicated usage of the same link for password change after a successful one. \\
+        \hline
+        \showR{r:e:logout} & The system must allow the user to logout. \\
+        \hline
+        \showR{r:e:notification} & The system must allow the user to set the preferred notification method. \\
+        \hline
+        \showR{r:e:car_add} & The system must allow the user to add a new vehicle. \\
+        \hline
+        \showR{r:e:car_remove} & The system must allow the user to remove an associated vehicle, only if there is at least one. \\
+        \hline
+        \showR{r:e:car_edit} & The system must allow the user to edit any associated vehicle's details. \\
+        \hline
+        \showR{r:e:stations_lookup} & The system must allow the user to look for nearby stations. \\
+        \hline
+        \showR{r:e:stations_sort} & The system must allow the user to sort the nearby stations according to distance, price, and availability. \\
+        \hline
+        \showR{r:e:stations_favorite_mark} & The system must allow the user to mark and unmark stations as \doublequotes{favorite}. \\
+        \hline
+        \showR{r:e:book} & The system must allow the user to book a charge in a charging station if any slot is available. \\
+        \hline
+        \showR{r:e:book_car} & The system must ask the user the vehicle s/he wants to charge every time s/he books a charge. \\
+        \hline
+    \end{tabular}
+\end{center}
+\begin{center}
+    \begin{tabular}{ | >{\centering\arraybackslash}m{0.1\columnwidth} | >{\arraybackslash}m{0.84\columnwidth} | }
+        \hline
+        \textbf{Identifier} & \multicolumn{1}{c|}{\textbf{Description}} \\
+        \hline
+        \hline
+        \showR{r:e:book_notification} & The system must notify the user of any successful booked charge. \\
+        \hline
+        \showR{r:e:book_add_calendar} & The system must allow the user to add any booked charge to the calendar. \\
+        \hline
+        \showR{r:e:book_all} & The system must allow the user to show all the booked charges, both past, and future (there might be limits). \\
+        \hline
+        \showR{r:e:book_edit} & The system must allow the user to edit or delete a booked charge before the end of the booked slot. \\
+        \hline
+        \showR{r:e:book_notification_slot} & The system must notify the user of the charging slot to use before the charge. \\
+        \hline
+        \showR{r:e:book_notification_end} & The system must notify the user when the charge is finished. \\
+        \hline
+        \showR{r:e:payment} & The system must allow the user to pay for the obtained service. \\
+        \hline
+        \showR{r:e:payment_notification} & The system must notify the user after every payment attempt (both in case of success and failure). \\
+        \hline
+        \showR{r:e:eroaming} & The system must periodically contact an eRoaming service for obtaining the list of available CPOs (and respective CPMSs). \\
+        \hline
+        \showR{r:e:cpms_connect} & The system must be able to connect to any CPMS that offers standard APIs. \\
+        \hline
+        \showR{r:e:cpms_communicate} & The system must be able to communicate with any connected CPMS through standard APIs. \\
+        \hline
+        \showR{r:e:user_registered} & The system must allow any registered user to do everything specified, except signing up. \\
+        \hline
+        \showR{r:e:user_unregistered} & The system must allow any unregistered user to only sign up and log in. \\
+        \hline
+        \showR{r:e:notification_app} & The system must send the notification only to the user's authenticated devices if the notification preference is by in-app notification. \\
+        \hline
+        \showR{r:e:notification_mail} & The system must send emails instead of in-app notifications if that's the user's preferred method or if there is no available user's device. \\
+        \hline
+    \end{tabular}
+\end{center}
+
+\subsection{CPMS requirements}
+
+\begin{center}
+    \begin{tabular}{ | >{\centering\arraybackslash}m{0.1\columnwidth} | >{\arraybackslash}m{0.84\columnwidth} | }
+        \hline
+        \textbf{Identifier} & \multicolumn{1}{c|}{\textbf{Description}} \\
+        \hline
+        \hline
+        \showR{r:c:input} & The system must check all input data correctness. \\
+        \hline
+        \showR{r:c:login} & The system must allow the user to log in. \\
+        \hline
+        \showR{r:c:pwchange} & The system must allow the user to change his/her password after logging in. \\
+        \hline
+        \showR{r:c:pwreset} & The system must allow any registered user to reset his/her password by sending an email to the specified address. \\
+        \hline
+        \showR{r:c:pwreset_timeout} & The system must discard any password change 24 hours after the request. \\
+        \hline
+        \showR{r:c:pwreset_duplicate} & The system must discard any duplicated usage of the same link for password change after a successful one. \\
+        \hline
+        \showR{r:c:logout} & The system must allow the user to logout. \\
+        \hline
+        \showR{r:c:API_show_booking} & The system must provide an API function to get information about all bookings present for any charging station. \\
+        \hline
+        \showR{r:c:API_book} & The system must provide an API function to add/delete a booking for a charging point in a charging station. \\
+        \hline
+        \showR{r:c:API_stations} & The system must provide an API function to get information about all charging points and respective sockets in a charging station. \\
+        \hline
+        \showR{r:c:API_prices} & The system must provide an API function to get information about prices relative to a charging station and socket types. \\
+        \hline
+        \showR{r:c:start_car_charge} & The system must start charging a car when it is first plugged in if it corresponds to the car for which a charge was booked in the corresponding time and place (same charging point/socket as well). \\
+        \hline
+        \showR{r:c:stop_car_charge_full} & The system must stop charging a car once it recognizes that the car battery has reached full capacity. \\
+        \hline
+        \showR{r:c:stop_car_charge_time} & The system must stop charging a car if the booking corresponding to that car ends and the car is still plugged in. \\
+        \hline
+        \showR{r:c:autoselect_DSO} & The system must automatically select the DSO that offers the best energy price if the “automatic DSO choice” is selected. \\
+        \hline
+    \end{tabular}
+\end{center}
+\begin{center}
+    \begin{tabular}{ | >{\centering\arraybackslash}m{0.1\columnwidth} | >{\arraybackslash}m{0.84\columnwidth} | }
+        \hline
+        \textbf{Identifier} & \multicolumn{1}{c|}{\textbf{Description}} \\
+        \hline
+        \hline
+        \showR{r:c:stop_battery_charge_full} & If a battery was charging and reaches a full charge, the system must stop charging the battery. \\
+        \hline
+        \showR{r:c:auto_mix} & The system must automatically change the energy mix if the \doublequotes{automatic mix choice} is selected. \\
+        \hline
+        \showR{r:c:notification_column} & The system must automatically notify the eMSP of the assignment of a charging column. \\
+        \hline
+        \showR{r:c:notification_charge} & The system must automatically notify the eMSP of the end of the car charge. \\
+        \hline
+        \showR{r:c:periodical_updates} & The system must periodically update the database with new data coming from sensors present in charging stations. \\
+        \hline
+        \showR{r:c:view_bookings} & The system must allow the CPMS user to view all bookings present for any charging station. \\
+        \hline
+        \showR{r:c:view_charging_point} & The system must allow the CPMS user to view all charging points, relative socket types, and if they are occupied or not, for any charging station. \\
+        \hline
+        \showR{r:c:view_battery_levels} & The system must allow the CPMS user to view the batteries' charge levels if present. \\
+        \hline
+        \showR{r:c:manage_offers} & The system must allow the CPMS user to create and delete special charge offers. \\
+        \hline
+        \showR{r:c:view_DSO} & The system must allow the CPMS user to view all DSO available. \\
+        \hline
+        \showR{r:c:view_DSO_prices} & The system must allow the CPMS user to view all DSO prices. \\
+        \hline
+        \showR{r:c:change_mix} & The system must allow the CPMS user to change the energy mix. \\
+        \hline
+        \showR{r:c:start_battery_charge} & The system must allow the CPMS user to start recharging batteries if they are present. \\
+        \hline
+        \showR{r:c:auto_DSO} & The system must allow the CPMS user to activate and deactivate \doublequotes{automatic DSO choice}. \\
+        \hline
+        \showR{r:c:auto_MIX} & The system must allow the CPMS user to activate and deactivate \doublequotes{automatic mix choice}. \\
+        \hline
+        \showR{r:c:DSO_payment} & The system must allow the CPMS user to modify the automatic DSO payment method. \\
+    \hline
+    \end{tabular}
+\end{center}
+
+\section{Mapping with components}
+
+\begin{center}
+    \begin{tabular}{ | >{\centering\arraybackslash\bfseries}m{0.06\columnwidth} | >{\arraybackslash}m{0.15\columnwidth} | >{\arraybackslash}m{0.34\columnwidth} | >{\arraybackslash}m{0.34\columnwidth} | }
+        \hline
+        Goal & \multicolumn{1}{c|}{\textbf{Requirements}} & \multicolumn{1}{c|}{\textbf{eMSP components}} & \multicolumn{1}{c|}{\textbf{CPMS components}} \\
+        \hline
+        \hline
+        \refG{g:e:lookup} & \refR{r:e:signup}-\refR{r:e:notification}, \refR{r:e:stations_lookup}-\refR{r:e:stations_favorite_mark}, \refR{r:e:eroaming}-\refR{r:e:user_unregistered} & \texttt{CPMShandler}, \texttt{DatabaseHandler}, \texttt{eRoamingHandler}, \texttt{User}, \texttt{Web server} & \texttt{APIhandler}, \texttt{DatabaseHandler}, \texttt{eRoamingHandler} \\
+        \hline
+        \refG{g:e:book} & \refR{r:e:signup}-\refR{r:e:car_edit}, \refR{r:e:book}-\refR{r:e:book_notification_slot}, \refR{r:e:cpms_communicate}-\refR{r:e:notification_mail} & \texttt{BookingHandler}, \texttt{CPMShandler}, \texttt{DatabaseHandler}, \texttt{Device}, \texttt{EmailHandler}, \texttt{User}, \texttt{Vehicle}, \texttt{Web server} & \texttt{APIhandler}, \texttt{Booking}, \texttt{DatabaseHandler} \\
+        \hline
+        \refG{g:e:start} & \refR{r:e:car_add}-\refR{r:e:car_edit}, \refR{r:e:cpms_communicate}-\refR{r:e:user_unregistered} & \texttt{DatabaseHandler}, \texttt{User}, \texttt{Vehicle}, \texttt{Web server} & \texttt{DatabaseHandler}, \texttt{ChargingColumn}, \texttt{ChargingStation} \\
+        \hline
+        \refG{g:e:notify} & \refR{r:e:signup}-\refR{r:e:car_edit}, \refR{r:e:book_notification_end}, \refR{r:e:cpms_communicate}-\refR{r:e:notification_mail}, \refR{r:c:notification_column}, \refR{r:c:notification_charge} & \texttt{APIhandler}, \texttt{DatabaseHandler}, \texttt{Device}, \texttt{EmailHandler}, \texttt{User} &\texttt{DatabaseHandler}, \texttt{ChargingStation}, \texttt{eMSPhandler} \\
+        \hline
+        \refG{g:e:pay} & \refR{r:e:signup}-\refR{r:e:car_edit}, \refR{r:e:payment}, \refR{r:e:payment_notification}, \refR{r:e:user_registered}-\refR{r:e:notification_mail} & \texttt{CPMShandler}, \texttt{DatabaseHandler}, \texttt{Device}, \texttt{EmailHandler}, \texttt{PaymentHandler}, \texttt{User}, \texttt{Web server} & \texttt{APIhandler}, \texttt{ChargingColumn}, \texttt{DatabaseHandler}, \texttt{eMSPhandler}, \texttt{PaymentHandler} \\
+        \hline
+        \refG{g:c:info} & \refR{r:e:book}, \refR{r:e:book_all}-\refR{r:e:book_notification_slot}, \refR{r:c:API_show_booking}-\refR{r:c:API_prices}, \refR{r:c:periodical_updates}-\refR{r:c:view_battery_levels} & \texttt{CPMShandler} & \texttt{APIhandler}, \texttt{ChargingColumn}, \texttt{ChargingStation}, \texttt{DatabaseHandler} \\
+        \hline
+        \refG{g:c:charge} & \refR{r:c:API_show_booking}, \refR{r:c:start_car_charge}-\refR{r:c:stop_car_charge_time}, \refR{r:c:notification_column}, \refR{r:c:notification_charge} & None & \texttt{ChargingColumn}, \texttt{ChargingStation}, \texttt{DatabaseHandler} \\
+        \hline
+        \refG{g:c:dso} & \refR{r:c:input}-\refR{r:c:logout}, \refR{r:c:autoselect_DSO}, \refR{r:c:view_DSO}, \refR{r:c:view_DSO_prices}, \refR{r:c:auto_DSO}, \refR{r:c:DSO_payment} & None & \texttt{ChargingStation}, \texttt{DatabaseHandler}, \texttt{DSOhandler}, \texttt{User}, \texttt{Web server} \\
+        \hline
+        \refG{g:c:mix} & \refR{r:c:input}-\refR{r:c:logout}, \refR{r:c:stop_battery_charge_full}, \refR{r:c:auto_mix}, \refR{r:c:change_mix}, \refR{r:c:start_battery_charge}, \refR{r:c:auto_MIX} & None & \texttt{ChargingStation}, \texttt{DatabaseHandler}, \texttt{EnergySource}, \texttt{User}, \texttt{Web server} \\
+        \hline
+        \refG{g:c:offers} & \refR{r:c:input}-\refR{r:c:logout}, \refR{r:c:API_prices}, \refR{r:c:manage_offers}, \refR{r:c:view_DSO_prices} & None & \texttt{DatabaseHandler}, \texttt{SpecialOffer}, \texttt{User}, \texttt{Web server} \\
+        \hline
+    \end{tabular}
+\end{center}

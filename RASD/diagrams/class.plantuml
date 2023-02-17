@@ -1,0 +1,121 @@
+@startuml
+
+
+
+/' eMSP '/
+
+package eMSP <<Rectangle>> {
+
+  interface eMSPapi
+
+  class "User" as eMSPuser
+  class Vehicle
+  class Device
+  class CPMShandler
+  class "eRoamingHandler" as eMSPeRoamingHandler
+  class "PaymentHandler" as eMSPpaymentHandler
+}
+
+Vehicle "1..n" - "1" eMSPuser : "has"
+eMSPuser "1" - "0..n" Device : "has"
+
+CPMShandler -[hidden] Vehicle
+Device -[hidden] eMSPeRoamingHandler
+
+
+
+/' CPMS '/
+
+package CPMS <<Rectangle>> {
+
+  interface CPMSapi
+
+  class "User" as CPMSuser 
+  class ChargingStation
+  class ChargingColumn
+  class Booking
+  class SpecialOffer
+  class EnergySource
+  class Battery
+  class SolarPanel
+  class DSOenergy
+  class eMSPhandler
+  class DSOhandler
+  class "eRoamingHandler" as CPMSeRoamingHandler
+  class "PaymentHandler" as CPMSpaymentHandler
+}
+
+EnergySource <|-- Battery
+EnergySource <|-- SolarPanel
+EnergySource <|-- DSOenergy
+
+ChargingStation *-- "1..n" ChargingColumn : "has"
+Booking "0..n" -- "1" ChargingStation : "has"
+ChargingStation "1" -- "0..n" EnergySource : "has"
+ChargingStation "0..n" -- "0..n" SpecialOffer : "has"
+
+CPMSuser "1..n" ..> "1..n" SpecialOffer : "creates / removes"
+CPMSuser "1..n" ..> "1..n" ChargingStation: "manages"
+
+EnergySource -[hidden] DSOhandler
+CPMSpaymentHandler -[hidden] ChargingStation
+CPMSuser -[hidden] Booking
+
+
+
+/' DSO '/
+
+package DSO <<Rectangle>> {
+
+  interface DSOapi
+}
+
+
+
+/' eRoaming '/
+
+package eRoaming <<Rectangle>> {
+
+  interface eRoamingAPI
+}
+
+
+
+/' PaymentService '/
+
+package PaymentService <<Rectangle>> {
+
+  interface PaymentAPI
+}
+
+
+
+/' eMSP - CPMS'/
+
+eMSPuser "1" -- "0..n" Booking : "has"
+eMSPuser "0..n" -- "0..n" ChargingStation : "favourites"
+
+
+
+/' APIs '/
+
+' eMSP
+eMSPhandler "0..n" .> "1..n" eMSPapi : "queries"
+
+' CPMS
+CPMShandler "0..n" ..> "1..n" CPMSapi : "queries"
+
+' DSO
+DSOhandler "1..n" .> "1..n" DSOapi : "queries"
+
+' eRoaming
+eMSPeRoamingHandler "0..n" .> "1..n" eRoamingAPI : "queries"
+eRoamingAPI "1..n" <. "0..n" CPMSeRoamingHandler : "queries"
+
+' PaymentService
+eMSPpaymentHandler "0..n" ..> "1..n" PaymentAPI : "uses"
+PaymentAPI "1..n" <. "0..n" CPMSpaymentHandler : "uses"
+
+
+
+@enduml

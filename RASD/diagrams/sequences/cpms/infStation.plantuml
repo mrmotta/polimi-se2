@@ -1,0 +1,32 @@
+@startuml infStation
+
+skinparam style strictuml
+autonumber
+
+actor User as u
+participant ViewController as sys
+database DataBase as db
+
+activate u
+u -> sys : get station info
+activate sys
+
+sys --> u : new view
+loop Until User exits view
+    sys ->> db : get station info
+    activate db
+    db -->> sys : info
+    deactivate db
+    sys -->> u: new info
+end
+u -> sys: exit
+sys -> db : get home view info
+activate db
+db --> sys : info
+deactivate db
+sys --> u: home view
+deactivate sys
+deactivate u
+
+
+@enduml

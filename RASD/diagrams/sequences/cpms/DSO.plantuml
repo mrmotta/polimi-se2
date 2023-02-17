@@ -1,0 +1,58 @@
+@startuml DSO
+
+skinparam style strictuml
+autonumber
+
+actor User as u
+participant ViewController as sys
+participant DSOHandler as dso
+database DataBase as db
+
+activate u
+u -> sys : get available DSO
+activate sys
+
+sys -> db : get available DSO
+activate db
+db --> sys : DSOs
+deactivate db
+sys --> u : DSOs
+deactivate sys
+
+u -> sys : get DSO view
+activate sys
+sys --> u: DSO view
+deactivate sys
+
+u -> sys : deselect automatic DSO choice
+activate sys
+sys -> dso : deselect automatic DSO choice
+activate dso
+dso --> sys : ack
+deactivate dso
+
+sys -> db : deselect automatic DSO choice
+activate db
+db --> sys : ack
+deactivate db
+sys --> u : ack
+deactivate sys
+
+u -> sys : select permanent DSO
+activate sys
+sys -> dso : select permanent DSO
+activate dso
+dso --> sys : ack
+deactivate dso
+
+sys -> db : select permanent DSO
+activate db
+db --> sys : ack
+deactivate db
+sys --> u : ack
+deactivate sys
+
+
+
+
+@enduml

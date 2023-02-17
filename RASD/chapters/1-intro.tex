@@ -1,0 +1,305 @@
+\chapter{Introduction} \label{introduction}
+
+Nowadays, electric vehicles are becoming very popular. The need to reduce pollution to save our planet is compelling, and anything we can do to reduce the effects of climate change is moving towards the use of clean energy sources, and everyone can do their part.\medskip
+
+Many people are changing their cars to electric ones, and in many cities charging stations are being installed for these vehicles. The main aim of the \textsc{eMall} project is to limit the carbon footprint of our mobility by making easy and efficient charging electric cars, focusing on planning the charge.\medskip
+
+The \textsc{eMall} project also focuses on the energy needed to accomplish charging cars, as it's important to manage it most efficiently. This is done to reduce the cost of the primary resources and to make the service even more competitive and cheap. The \textsc{eMall} project tries to simplify also this aspect of the charge chain.
+
+\section{Purpose}
+
+The purpose of this document is to provide a general, complete, high-level view of the eMSP and CPMS systems, and of their interactions.\medskip
+
+This document comprehends:
+\begin{itemize}
+    \item The description of the main goals of the project, with the identification of the interesting phenomena. These phenomena are selected among the ones that might indirectly influence the system or that the system has knowledge of.
+    \item The main scenarios the system can handle. Each of them is then precisely depicted more formally thanks to the use of diagrams.
+    \item The system's requirements.
+    \item A formal analysis of the requirements' feasibility.
+\end{itemize}
+
+\section{Scope}
+
+\paragraph{eMSP | Simplify the charging process of electric vehicles} Charging an electric vehicle can be a challenging task to do. Nowadays, it's not so easy to find charging stations where to plug the vehicle. So, also looking at the future where this kind of station will be more present in the territory, it's fundamental to have a system like this one to carefully plan the charge of the vehicle, in order to minimize the time spent on this task, so that it doesn't have any impact on drivers' lives. Thanks to this system it's possible to search for a charging station nearby, check prices and sales, and, of course, book a charging slot for the vehicle.
+
+\paragraph{CPMS | Optimize the energy usage and supply} To be competitive, it's also important to minimize the costs of the whole infrastructure, paying careful attention to the price of the electricity and to the mix of primary sources from which it was derived. On the market, there are possibly many DSOs, each one with different supply capabilities, prices, and energy mixes. Choosing from which source to buy the energy is crucial, especially if the CPO can store it in batteries at the charging station.
+
+\pagebreak
+
+\section{Goals}
+
+More formally, here are formalized all the goals that the system should archive.
+
+\subsection{eMSP goals}
+
+This first part focuses on the goals related to the eMPS.
+
+\begin{center}
+    \begin{tabular}{ >{\arraybackslash}m{0.06\columnwidth} | >{\arraybackslash}m{0.88\columnwidth} }
+        \textbf{\showG{g:e:lookup}} & \textbf{Allow the user to see all the charging stations} \\
+        \hline
+        \multicolumn{2}{p{0.966\columnwidth}}{
+            The user can see and look for all the available charging stations with all the important information, like the cost of the charge and any special offers.
+        } \\
+    \end{tabular}
+\end{center}
+\begin{center}
+    \begin{tabular}{ >{\arraybackslash}m{0.06\columnwidth} | >{\arraybackslash}m{0.88\columnwidth} }
+        \textbf{\showG{g:e:book}} & \textbf{Allow the user to book a charge} \\
+        \hline
+        \multicolumn{2}{p{0.966\columnwidth}}{
+            Every user can reserve a charge if any slot is available. The user can select a charging station, the starting time, and the duration of the charge. Moreover, s/he selects the type of socket to use.
+        } \\
+    \end{tabular}
+\end{center}
+\begin{center}
+    \begin{tabular}{ >{\arraybackslash}m{0.06\columnwidth} | >{\arraybackslash}m{0.88\columnwidth} }
+        \textbf{\showG{g:e:start}} & \textbf{Allow the user to start the charge} \\
+        \hline
+        \multicolumn{2}{p{0.966\columnwidth}}{
+            Every user who has booked can start the charging process during the booked period. This is done automatically by recognizing the connected vehicle once the socket is plugged in.
+        } \\
+    \end{tabular}
+\end{center}
+\begin{center}
+    \begin{tabular}{ >{\arraybackslash}m{0.06\columnwidth} | >{\arraybackslash}m{0.88\columnwidth} }
+        \textbf{\showG{g:e:notify}} & \textbf{Let the system notify the user when the charge is finished} \\
+        \hline
+        \multicolumn{2}{p{0.966\columnwidth}}{
+            End users are informed every time one of their vehicles charging in one station ends the recharging process through a notification.
+        } \\
+    \end{tabular}
+\end{center}
+\begin{center}
+    \begin{tabular}{ >{\arraybackslash}m{0.06\columnwidth} | >{\arraybackslash}m{0.88\columnwidth} }
+        \textbf{\showG{g:e:pay}} & \textbf{Allow the user to pay for the service} \\
+        \hline
+        \multicolumn{2}{p{0.966\columnwidth}}{
+            Every user can pay for the obtained charging process.
+        } \\
+    \end{tabular}
+\end{center}
+
+\subsection{CPMS goals}
+
+This second part, instead, focuses on the goals related to the CPMS.
+
+\begin{center}
+    \begin{tabular}{ >{\arraybackslash}m{0.06\columnwidth} | >{\arraybackslash}m{0.88\columnwidth} }
+        \textbf{\showG{g:c:info}} & \textbf{Let the system have information about charging stations} \\
+        \hline
+        \multicolumn{2}{p{0.966\columnwidth}}{
+            Know the position and the characteristics of all the various charging stations, like sockets, batteries, available energy, and occupation.
+        } \\
+    \end{tabular}
+\end{center}
+\begin{center}
+    \begin{tabular}{ >{\arraybackslash}m{0.06\columnwidth} | >{\arraybackslash}m{0.88\columnwidth} }
+        \textbf{\showG{g:c:charge}} & \textbf{Allow for cars to charge} \\
+        \hline
+        \multicolumn{2}{p{0.966\columnwidth}}{
+            Start the charge of a vehicle, monitoring the process.
+        } \\
+    \end{tabular}
+\end{center}
+\begin{center}
+    \begin{tabular}{ >{\arraybackslash}m{0.06\columnwidth} | >{\arraybackslash}m{0.88\columnwidth} }
+        \textbf{\showG{g:c:dso}} & \textbf{Fetch information from DSO and decide which DSO to use} \\
+        \hline
+        \multicolumn{2}{p{0.966\columnwidth}}{
+            Acquire the price of the electricity from the providers and decide from which to buy, if more options are available. 
+        } \\
+    \end{tabular}
+\end{center}
+\begin{center}
+    \begin{tabular}{ >{\arraybackslash}m{0.06\columnwidth} | >{\arraybackslash}m{0.88\columnwidth} }
+        \textbf{\showG{g:c:mix}} & \textbf{Define energy mix} \\
+        \hline
+        \multicolumn{2}{p{0.966\columnwidth}}{
+            Decide the mix of electricity to provide to the sockets, deciding whether to buy energy, use the one stored in batteries or buy energy to store in batteries.
+        } \\
+    \end{tabular}
+\end{center}
+\begin{center}
+    \begin{tabular}{ >{\arraybackslash}m{0.06\columnwidth} | >{\arraybackslash}m{0.88\columnwidth} }
+        \textbf{\showG{g:c:offers}} & \textbf{Manage special offers} \\
+        \hline
+        \multicolumn{2}{p{0.966\columnwidth}}{
+            Create new special offers on prices for charging.
+        } \\
+    \end{tabular}
+\end{center}
+
+\pagebreak
+
+\section{Phenomena}
+
+This part focuses on the description of the various interesting phenomena that are important in order to correctly develop this project.
+
+\subsection{World phenomena}
+
+World phenomena are the ones that are proper of the world's domain, and therefore invisible to the modeled machine, but still, it's important to point them out since they influence the system.
+
+\begin{center}
+    \begin{tabular}{ | >{\centering\arraybackslash}m{0.1\columnwidth} | >{\arraybackslash}m{0.84\columnwidth} | }
+        \hline
+        \textbf{Identifier} & \multicolumn{1}{c|}{\textbf{Description}} \\
+        \hline
+        \hline
+        \showWP{wp:lookup} & The user looks for a nearby station (with its cost and offers). \\
+        \hline
+        \showWP{wp:vehicle} & The user brings the vehicle to the charging column for the booked charging slot. \\
+        \hline
+    \end{tabular}
+\end{center}
+
+\subsection{Shared phenomena}
+
+This first part points out the shared phenomena between the world and the machine that are world-controlled.
+
+\begin{center}
+    \begin{tabular}{ | >{\centering\arraybackslash}m{0.1\columnwidth} | >{\arraybackslash}m{0.84\columnwidth} | }
+        \hline
+        \textbf{Identifier} & \multicolumn{1}{c|}{\textbf{Description}} \\
+        \hline
+        \hline
+        \showSP{sp:w:book} & The user books a charging slot in a charging station. \\
+        \hline
+        \showSP{sp:w:plugin} & The user plugs in the vehicle for the charge. \\
+        \hline
+        \showSP{sp:w:unplug} & The user unplugs the vehicle after the charge or to stop it. \\
+        \hline
+        \showSP{sp:w:pay} & The user pays for the obtained service. \\
+        \hline
+        \showSP{sp:w:dso} & The DSO changes the price of the electricity. \\
+        \hline
+        \showSP{sp:w:energy} & The electricity for charging the vehicles is provided. \\
+        \hline
+    \end{tabular}
+\end{center}
+
+This second part, instead, focuses on the machine-controlled shared phenomena.
+
+\begin{center}
+    \begin{tabular}{ | >{\centering\arraybackslash}m{0.1\columnwidth} | >{\arraybackslash}m{0.84\columnwidth} | }
+        \hline
+        \textbf{Identifier} & \multicolumn{1}{c|}{\textbf{Description}} \\
+        \hline
+        \hline
+        \showSP{sp:m:start} & The system starts the charge of a vehicle. \\
+        \hline
+        \showSP{sp:m:notify} & The system notifies the user when the charging process is finished. \\
+        \hline
+        \showSP{sp:m:batteries} & The system changes the charging level of the batteries, storing or consuming their energy. \\
+        \hline
+        \showSP{sp:m:distribution} & The system manages the distribution of energy to the vehicles. \\
+        \hline
+        \showSP{sp:m:price} & The system acquires information about the current price of the energy offered by DSOs. \\
+        \hline
+    \end{tabular}
+\end{center}
+
+Moreover, some shared phenomena can be both world-controlled and machine-controlled. These are listed down here.
+
+\begin{center}
+    \begin{tabular}{ | >{\centering\arraybackslash}m{0.1\columnwidth} | >{\arraybackslash}m{0.84\columnwidth} | }
+        \hline
+        \textbf{Identifier} & \multicolumn{1}{c|}{\textbf{Description}} \\
+        \hline
+        \hline
+        \showSP{sp:cost} & The cost of a charge is changed. \\
+        \hline
+        \showSP{sp:offer} & A special offer is added or removed. \\
+        \hline
+        \showSP{sp:mix} & The energy mix for a specific vehicle is decided. \\
+        \hline
+        \showSP{sp:battery} & The decision whether to use the battery energy or to store it in one is taken by the user. \\
+        \hline
+        \showSP{sp:dso} & The decision of the DSO from which buying the energy is taken by the user. \\
+        \hline
+    \end{tabular}
+\end{center}
+
+\pagebreak
+
+\section{Definitions, acronyms and abbreviations}
+
+\subsection{Definitions}
+
+\begin{center}
+    \begin{tabular}{ | >{\centering\arraybackslash}m{0.15\columnwidth} | >{\arraybackslash}m{0.79\columnwidth} | }
+        \hline
+        \textbf{Word} & \multicolumn{1}{c|}{\textbf{Definition}} \\
+        \hline
+        \hline
+        eRoaming & The \textit{eRoaming} is an external service that the system can query in order to obtain information about the various connected eMPSs and CPMSs. \\
+        \hline
+    \end{tabular}
+\end{center}
+
+\subsection{Acronyms}
+
+\begin{center}
+    \begin{tabular}{ | >{\centering\arraybackslash}m{0.15\columnwidth} | >{\arraybackslash}m{0.79\columnwidth} | }
+        \hline
+        \textbf{Acronym} & \multicolumn{1}{c|}{\textbf{Description}} \\
+        \hline
+        \hline
+        API & \textit{Application Programming Interface}: is a set of instructions and interfaces that is standardized in order to facilitate the communication between different pieces of software. \\
+        \hline
+        CPMS & \textit{Charge Point Management System}: the CPOs management system that supports the process of charging vehicles and acquiring energy from the various DSOs. \\
+        \hline
+        CPO & \textit{Charging Point Operator}: the name of the operators managing the charging points and providing the actual charging service. \\
+        \hline
+        DBMS & \textit{DataBase Management System}: it's the system that sits between the physical data structures on disk and the user, allowing to create, read, update and delete data. \\
+        \hline
+        DSO & \textit{Distribution System Operator}: the name of the operators that provide the actual energy used during the charging process. \\
+        \hline
+        eMSP & \textit{e-Mobility Service Provider}: the name of the providers of the service to the end users, acting as intermediaries between the users and the backing CPOs. \\
+        \hline
+        ES6 & \textit{ECMAScript 6}: is a JavaScript standard which ensures interoperatibility between different web browsers. \\
+        \hline
+        JWT & \textit{JSON Web Token}: is a standardized method for securely representing claims between two parties. \\
+        \hline
+        UML & \textit{Unified Modeling Language}: is a modeling language used to formally specify the design of a system. \\
+        \hline
+    \end{tabular}
+\end{center}
+
+\subsection{Abbreviations}
+
+\begin{center}
+    \begin{tabular}{ | >{\centering\arraybackslash}m{0.15\columnwidth} | >{\arraybackslash}m{0.79\columnwidth} | }
+        \hline
+        \textbf{Abbreviation} & \multicolumn{1}{c|}{\textbf{Description}} \\
+        \hline
+        \hline
+        \textsc{eMall} & \textsc{eMall - e-Mobility for All}. \\
+        \hline
+    \end{tabular}
+\end{center}
+
+\section{Revision history}
+
+\paragraph{Version 1.0} released on December 22, 2022: original release.
+\paragraph{Version 1.1} released on \today: uniformed section names, fixed alloy worlds, updated \refUC{uc:e:book}, \refUC{uc:e:edit} and \refUC{uc:e:payment}, added \nameref{credits} section and fixed typos.
+
+\section{Reference documents}
+
+\begin{enumerate}
+    \item \textbf{M. Camilli, E. Di Nitto, M. G. Rossi}; \textit{eMall - e-Mobility for All project} (2022)
+\end{enumerate}
+
+\pagebreak
+
+\section{Document structure}
+
+\paragraph{\introreference{introduction}} This first part provides a general introduction to the project and describes the main purpose and goals it tries to archive, defining the scope of the project and pointing out some definitions, acronyms, and abbreviations used in this document. Moreover, there are all the revisions of the document with all the references used for writing it.
+
+\paragraph{\introreference{description}} This second part focuses on a formal description of the project, explaining all the possible scenarios in which the application is used. The formalization part in this section is done by taking advantage of various UML diagrams, which won't cover every possibility since, as stated in this chapter, some domain assumptions limit the scope. Furthermore, it's provided a brief but precise description of the characteristics of the various types of users, with their respective needs, that interact with the system.
+
+\paragraph{\introreference{requirements}} This third part, instead, is concerned with all the specific requirements that can be useful when developing the system. In particular, are pointed out all the interfaces that should be present (user, hardware, software, and communication interfaces), together with functional and performance requirements. Also, there are some design constraints and all the reliability, availability, security, maintainability, and portability attributes of the system.
+
+\paragraph{\introreference{alloy}} This fourth part covers the formal description of the whole system thanks to the use of a modeling language such as Alloy that allows proving the feasibility of the goals, starting from all the constraints and requirements.
+
+\paragraph{\introreference{conclusions}} This last part contains the last notes about the project and concludes this document, pointing out the effort that each of the authors of this document spent in order to release it.

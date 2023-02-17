@@ -1,0 +1,78 @@
+@startuml energyMix
+
+skinparam style strictuml
+autonumber
+
+actor "CPMS user" as cu
+participant "Web Server" as web
+participant "ChargingStation" as station
+participant Battery
+participant "Solar Panel" as panel
+participant "DSO energy" as dsoe
+participant User as user
+participant DatabaseHandler as db
+
+activate cu
+activate web
+
+cu -> web : activate automatic mix choice
+activate web
+web -> user : setAutomaticEnergyMix (CPMSuserID, stationID, true)
+activate user
+user -> station : setAutomaticEnergyMix (CPMSuserID, stationID, true)
+activate station
+station -> db : setAutomaticEnergyMix (CPMSuserID, stationID, true)
+activate db
+db --> db : checkStation (CPMSuserID, stationId)
+db --> station : ack
+deactivate db
+
+station --> user : ack
+
+par 
+    user --> web: ack
+    deactivate user
+    web --> cu: ack
+    deactivate web
+    cu -> web : logout
+    activate web
+    web -> user: logout()
+    activate user
+    user --> web : ack
+    deactivate user
+    web --> cu : login page
+    deactivate web
+    deactivate web
+    deactivate cu
+else 
+    loop until automatic mix is deactivated
+        activate station
+        station -> db : getSensorsData(stationID)
+        activate db
+        db --> station : data
+        deactivate db
+        station -> db : defineEnergyMix(stationID, usedSources)
+        activate db
+        db --> station : ack
+        deactivate db
+        station -> Battery: activate/deactivate
+        activate Battery
+        Battery --> station : ack
+        deactivate Battery
+        station -> panel: activate/deactivate
+        activate panel
+        panel --> station : ack
+        deactivate panel
+        station -> dsoe: activate/deactivate
+        activate dsoe
+        dsoe --> station : ack
+        deactivate dsoe
+        station --> station : wait
+    end
+    deactivate station
+end
+deactivate station
+
+
+
+@enduml

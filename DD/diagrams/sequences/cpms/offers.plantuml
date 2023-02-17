@@ -1,0 +1,53 @@
+@startuml offers
+
+skinparam style strictuml
+autonumber
+
+actor "CPMS user" as cu
+participant DatabaseHandler as db
+participant "Web Server" as web
+participant User as user
+
+activate cu
+activate web
+
+cu -> web : get offer view
+activate web
+web --> cu : view
+
+web -> user : getOffers (CPMSuserID)
+activate user
+user -> db : getOffers (CPMSuserID)
+activate db
+db --> user : offers
+deactivate db
+user --> web : offers
+deactivate user
+web -->> cu : offers
+deactivate web
+
+cu -> web : create new offer
+activate web
+
+alt Specified StationId
+    web -> user : createNewOffer (CPMSuserID, stationID, discount, start, end)
+    activate user
+    user -> db : createNewOffer (CPMSuserID, stationID, discount, start, end)
+    activate db
+    db --> db : checkStation(CPMSuserID, stationId)
+    db --> user : ack
+    deactivate db
+else unSpecified stationId
+    web -> user : createNewOffer (CPMSuserID, null, discount, start, end)
+    user -> db : createNewOfferAllStations (CPMSuserID, discount, start, end)
+    activate db
+    db --> user : ack
+    deactivate db
+end
+
+user --> web : ack
+deactivate user
+web --> cu : ack
+deactivate web
+
+@enduml
